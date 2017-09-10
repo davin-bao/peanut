@@ -52,7 +52,8 @@ module.exports = {
                 test: /\.css$/,
                 use: ExtractTextPlugin.extract({
                     use: ['css-loader?minimize', 'autoprefixer-loader'],
-                    fallback: 'style-loader'
+                    fallback: 'style-loader',
+                    publicPath:'../static/'
                 })
             },
             {
@@ -82,7 +83,7 @@ module.exports = {
             filename: 'vendors.js'
         }),
         new HtmlWebpackPlugin({
-            filename: '../../resources/views/index.html',
+            filename: '../../resources/views/index.php',
             template: './resources/templates/index.ejs',
             inject: false
         })
