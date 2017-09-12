@@ -38,6 +38,7 @@
     "webpack-merge": "^3.0.0"
   },
   "scripts": {
+    "start": "webpack --progress --config webpack.dev.theme.config.js",
     "init": "webpack --progress --config webpack.dev.config.js",
     "build": "webpack --progress --hide-modules --config webpack.pro.config.js"
   },
