@@ -1,7 +1,7 @@
 {
-  "name": "lumen-blog",
+  "name": "davinbaopeanut",
   "version": "1.0.0",
-  "description": "lumen and iview",
+  "description": "The Docker UI for lumen.",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -38,7 +38,8 @@
     "webpack-merge": "^3.0.0"
   },
   "scripts": {
-    "start": "webpack --progress --config webpack.dev.theme.config.js",
+    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.theme.config.js",
+    "dev": "webpack --progress --config webpack.dev.theme.config.js",
     "init": "webpack --progress --config webpack.dev.config.js",
     "build": "webpack --progress --hide-modules --config webpack.pro.config.js"
   },

@@ -10,4 +10,6 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+$router->get('nodes', ['as' => 'node_list', 'uses' => 'NodeController@getList']);
+
 $router->get('/', ['as' => 'index', 'uses' => 'IndexController@getIndex']);

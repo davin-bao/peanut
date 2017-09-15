@@ -1,7 +1,7 @@
 {
-    "name": "laravel/lumen",
-    "description": "The Laravel Lumen Framework.",
-    "keywords": ["framework", "laravel", "lumen"],
+    "name": "davin-bao/peanut",
+    "description": "The Docker UI for lumen.",
+    "keywords": ["docker", "laravel", "lumen"],
     "license": "MIT",
     "type": "project",
     "require": {
