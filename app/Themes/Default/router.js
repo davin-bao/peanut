@@ -3,9 +3,15 @@ const routers = [
         path: '/',
         meta: {
             title: '',
-            breadcrumbName: "控制面板"
         },
         component: (resolve) => require(['./vues/index.vue'], resolve)
+    },
+    {
+        path: '/stack',
+        meta: {
+            title: ''
+        },
+        component: (resolve) => require(['./vues/stack.vue'], resolve)
     }
 ];
 export default routers;

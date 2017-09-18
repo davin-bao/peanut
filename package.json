@@ -7,9 +7,12 @@
     "test": "tests"
   },
   "dependencies": {
+    "axios": "^0.16.2",
+    "iview": "^2.3.0",
     "vue": "^2.4.1",
+    "vue-i18n": "^7.2.0",
     "vue-router": "^2.2.1",
-    "iview": "^2.3.0"
+    "vuetify": "^0.15.7"
   },
   "devDependencies": {
     "autoprefixer-loader": "^2.0.0",
@@ -38,7 +41,7 @@
     "webpack-merge": "^3.0.0"
   },
   "scripts": {
-    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.theme.config.js",
+    "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.theme.config.js --content-base ./public",
     "dev": "webpack --progress --config webpack.dev.theme.config.js",
     "init": "webpack --progress --config webpack.dev.config.js",
     "build": "webpack --progress --hide-modules --config webpack.pro.config.js"

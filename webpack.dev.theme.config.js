@@ -34,7 +34,8 @@ module.exports = {
                         }),
                         css: ExtractTextPlugin.extract({
                             use: ['css-loader', 'autoprefixer-loader', 'less-loader'],
-                            fallback: 'vue-style-loader'
+                            fallback: 'vue-style-loader',
+                            publicPath:'/static/'
                         })
                     }
                 }
@@ -52,8 +53,7 @@ module.exports = {
                 test: /\.css$/,
                 use: ExtractTextPlugin.extract({
                     use: ['css-loader?minimize', 'autoprefixer-loader'],
-                    fallback: 'style-loader',
-                    publicPath:'../static/'
+                    fallback: 'style-loader'
                 })
             },
             {
@@ -64,7 +64,7 @@ module.exports = {
                 })
             },
             {
-                test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
+              test: /\.(gif|jpg|png|woff|woff2|svg|eot|ttf)(\?.*)?$/,
                 loader: 'url-loader?limit=1024'
             },
             {
@@ -80,6 +80,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             filename: '../../resources/views/index.php',
+            //filename: '../../public/index.html',
             template: themePath + '/home.ejs',
             inject: false
         })

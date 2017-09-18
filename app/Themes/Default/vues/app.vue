@@ -1,138 +1,114 @@
 <style scoped>
+    @import '../styles/fonts.css';
     @import '../styles/app.css';
 </style>
-<style scoped lang="less">
-    .layout{
-        border: 1px solid #d7dde4;
-        background: #f5f7f9;
-        position: relative;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-    .layout-breadcrumb{
-        padding: 10px 15px 0;
-    }
-    .layout-content{
-        min-height: 200px;
-        margin: 15px;
-        overflow: hidden;
-        background: #fff;
-        border-radius: 4px;
-    }
-    .layout-content-main{
-        padding: 10px;
-    }
-    .layout-copy{
-        text-align: center;
-        padding: 10px 0 20px;
-        color: #9ea7b4;
-    }
-    .layout-menu-left{
-        background: #464c5b;
-    }
-    .layout-header{
-        height: 60px;
-        background: #fff;
-        box-shadow: 0 1px 1px rgba(0,0,0,.1);
-    }
-    .layout-logo-left{
-        width: 90%;
-        border-radius: 3px;
-        margin: 15px auto;
-    img {
-        height: 50px;
-    }
-    }
-    .layout-ceiling-main a{
-        color: #9ba7b5;
-    }
-    .layout-hide-text .layout-text{
-        display: none;
-    }
-    .ivu-col{
-        transition: width .2s ease-in-out;
-    }
-</style>
 <template>
-    <div class="layout" :class="{'layout-hide-text': spanLeft < 5}">
-        <Row type="flex">
-            <Col :span="spanLeft" class="layout-menu-left">
-            <Menu active-name="1" theme="dark" width="auto">
-                <div class="layout-logo-left">
-                    <img src="../images/logo.png">
+    <v-app id="example-1" toolbar footer :dark="dark">
+        <v-navigation-drawer
+                persistent
+                height="100%"
+                clipped
+                persistent
+                v-model="drawer"
+                enable-resize-watcher
+                absolute
+                fill-height="false"
+                :dark="dark"
+                :mini-variant="mini"
+                overflow
+        >
+            <v-list>
+                <v-list-group v-for="item in menus" :value="item.active" v-bind:key="item.title">
+                    <v-list-tile slot="item" v-model="item.active" :title="$t(item.title)" :key='item.href' :href='item.href' v-bind:router='true'>
+                        <v-list-tile-action>
+                            <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{ $t(item.title) }}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-divider></v-divider>
+                </v-list-group>
+            </v-list>
+        </v-navigation-drawer>
+        <v-toolbar fixed :dark="dark">
+            <v-toolbar-side-icon @click.stop="mini = !mini"></v-toolbar-side-icon>
+            <v-toolbar-title>{{ $t("title") }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-menu offset-y>
+                <v-btn fab dark slot="activator">
+                    <v-icon>language</v-icon>
+                </v-btn>
+                <v-list>
+                    <v-list-tile v-for="lang in locales" :key="lang" @click="changeLocale(lang)">
+                        <v-list-tile-title>{{lang}}</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
+            <v-btn icon>
+                <v-icon>account_circle</v-icon>
+            </v-btn>
+        </v-toolbar>
+        <main>
+            <v-container fluid>
+                <v-breadcrumbs divider="/" offset-y>
+                    <v-breadcrumbs-item
+                            v-for="item in breadcrumbs" :key="item.text"
+                            :disabled="item.disabled"
+                    >
+                        {{ item.text }}
+                    </v-breadcrumbs-item>
+                </v-breadcrumbs>
+                <div>
+                    <v-alert v-bind='message' v-model='message.show' :error='message.error' :info='message.info' :success='message.success' dismissible transition="slide-y-transition">
+                        {{message.body}}
+                    </v-alert>
                 </div>
-                <MenuItem name="1">
-                    <Icon type="ios-navigate" :size="iconSize"></Icon>
-                    <span class="layout-text">选项 1</span>
-                </MenuItem>
-                <MenuItem name="2">
-                    <Icon type="ios-keypad" :size="iconSize"></Icon>
-                    <span class="layout-text">选项 2</span>
-                </MenuItem>
-                <MenuItem name="3">
-                    <Icon type="ios-analytics" :size="iconSize"></Icon>
-                    <span class="layout-text">选项 3</span>
-                </MenuItem>
-            </Menu>
-            </Col>
-            <Col :span="spanRight">
-            <div class="layout-header">
-                <Button type="text" @click="toggleClick">
-                    <Icon type="navicon" size="32"></Icon>
-                </Button>
-            </div>
-            <div class="layout-breadcrumb">
-                <Breadcrumb>
-                    <BreadcrumbItem v-for="(item,index) in brumblist" :key="index" v-bind:href="item.path">
-                        {{item.meta.breadcrumbName}}
-                    </BreadcrumbItem>
-                </Breadcrumb>
-            </div>
-            <div class="layout-content">
-                <div class="layout-content-main">
-                    <router-view></router-view>
-                </div>
-            </div>
-            <div class="layout-copy">
-                2011-2016 &copy; Davin
-            </div>
-            </Col>
-        </Row>
-    </div>
+                <router-view></router-view>
+            </v-container>
+        </main>
+        <v-footer :dark="dark">
+            <span class="light-blue--text">© 2017</span>
+        </v-footer>
+    </v-app>
 </template>
 <script>
     export default {
         data () {
             return {
-                spanLeft: 5,
-                spanRight: 19
-            }
-        },
-        computed: {
-            iconSize () {
-                return this.spanLeft === 5 ? 14 : 24;
+                message: {},
+                drawer: true,
+                dark: true,
+                mini: false,
+                locales: ['en-US', 'zh-CN'],
+                breadcrumbs: [],
+                menus: [
+                    {title: 'menu.dashboard', icon: 'home', href: '/'},
+                    {title: 'menu.stack', icon: 'domain', href: '#/stack'}
+                ]
             }
         },
         methods: {
-            toggleClick () {
-                if (this.spanLeft === 5) {
-                    this.spanLeft = 2;
-                    this.spanRight = 22;
-                } else {
-                    this.spanLeft = 5;
-                    this.spanRight = 19;
+            changeLocale (to) {
+                if(typeof(to) == 'undefined'){
+                    to = 'zh-CN';
                 }
-            },
-            getBreadcrumb () {
-                this.brumblist = this.$route.matched;
-                this.$route.matched.forEach((item, index) => {
-                    item.meta.breadcrumbName === '控制面板' ? item.path = '/' : this.$route.path === item.path ? this.title = item.meta.breadcrumbName : '';
-                })
+                this.$i18n.locale = to;
+                this.message = { show: true, success: true, body: to};
             }
         },
+        mounted () {
+            //this.changeLocale();
+        },
         watch: {
-            $route () {
-                this.getBreadcrumb();
+            '$route' (to, from) {
+                this.breadcrumbs.push({ text: "首页"});
+                this.menus.forEach(function(menu) {
+                    if(to.hash == menu.href || (to.hash == '' && menu.href == '/')){
+                        menu.active = true;
+                    }
+                });
+
             }
         }
     }
