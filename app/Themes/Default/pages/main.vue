@@ -35,12 +35,12 @@
                 </v-list-group>
             </v-list>
         </v-navigation-drawer>
-        <v-toolbar fixed :dark="dark">
+        <v-toolbar fixed>
             <v-toolbar-side-icon @click.stop="mini = !mini"></v-toolbar-side-icon>
             <v-toolbar-title>{{ $t("title") }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-menu offset-y>
-                <v-btn fab dark slot="activator">
+                <v-btn fab slot="activator">
                     <v-icon>language</v-icon>
                 </v-btn>
                 <v-list>
@@ -71,7 +71,7 @@
                 <router-view></router-view>
             </v-container>
         </main>
-        <v-footer :dark="dark">
+        <v-footer>
             <span class="light-blue--text">© 2017</span>
         </v-footer>
     </v-app>
