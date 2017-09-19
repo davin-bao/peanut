@@ -7,20 +7,38 @@ const store = new Vuex.Store({
     state: {
         pageTitle: 'Home',
         menu: menu,
+        nodes: [],
         message: {
-            type: null,
-            body: null
+            show: false,
+            body: null,
+            success: null,
+            error: null,
+            info: null,
         }
     },
     mutations: {
+        getNodes (state) {
+
+        },
         setMenu (state, data) {
             state.menu = data
         },
         setPageTitle (state, data) {
             state.pageTitle = data
         },
-        showMessage (state, type, body) {
-            state.message = { type, body }
+        showMessage (state, message) {
+            state.message = {body: message.body, show: true};
+            switch (message.type){
+                case 'success':
+                    state.message.success = true;
+                    break;
+                case 'error':
+                    state.message.error = true;
+                    break;
+                case 'info':
+                    state.message.info = true;
+                    break;
+            }
         }
     },
     actions: {

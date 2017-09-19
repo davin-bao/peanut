@@ -64,7 +64,7 @@
                     </v-breadcrumbs>
                 </v-system-bar>
                 <div>
-                    <v-alert v-bind='message' v-model='message.show' :error='message.error' :info='message.info' :success='message.success' dismissible transition="slide-y-transition">
+                    <v-alert v-bind='message' v-model='message.show' error='message.error' info='message.info' success='message.success' dismissible transition="slide-y-transition">
                         {{message.body}}
                     </v-alert>
                 </div>
@@ -94,7 +94,7 @@
                     to = 'zh-CN';
                 }
                 this.$i18n.locale = to;
-                this.message = { show: true, success: true, body: to};
+                this.$store.commit('showMessage', {type: 'success', body: to});
             }
         },
         mounted () {
@@ -111,7 +111,6 @@
                     }else{
                         menu.active = false;
                     }
-                    console.log(menu);
                 });
 
             }

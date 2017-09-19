@@ -1,5 +1,5 @@
 module.exports = {
-    "en-us": {
+    "en-US": {
         title: 'Peanut',
         menu: {
             home: 'Home',
