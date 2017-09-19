@@ -5,7 +5,8 @@ module.exports = {
             home: 'Home',
             dashboard: 'Dashboard',
             stack: 'Stack'
-        }
+        },
+
     },
     "zh-CN": {
         title: 'Peanut',

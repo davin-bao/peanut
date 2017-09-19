@@ -1,23 +1,55 @@
 <template>
     <v-container fluid grid-list-md>
         <v-layout row>
-            <v-flex xs6 md4 lg3 xl2>
-                <v-card dark tile flat>
+            <v-flex xs6 md4 lg3 xl3>
+                <v-card>
                     <v-card-title primary-title>
-                        <div>
-                            <h3 class="headline mb-0">Node 1</h3>
-                            <div>Node</div>
+                        <h6 class=" mb-0">host-192-168-188-210-1</h6>
+                        <div>Docker Version: 17.09.0-ce-rc1</div>
+                        <div class="text-xs-right">
+                            <v-chip label class="primary white--text">Leader</v-chip>
+                            <v-chip label class="success white--text">ready</v-chip>
                         </div>
                     </v-card-title>
-                    <v-card-text>#1</v-card-text>
+                    <v-card-text>
+                        <v-divider></v-divider>
+                        <div class="text-xs-left">
+                            <v-chip label class="pink white--text">Label</v-chip>
+                        </div>
+                        <v-divider></v-divider>
+                        <p></p>
+                        <p class="caption">CPU Core: 16</p>
+                        <p class="caption">Memory(G): 16</p>
+                        <p class="caption">Platform: linux x86_64</p>
+                        <v-divider></v-divider>
+                        <p></p>
+                        <p class="caption">Address: 192.168.188.210:2377</p>
+                        <p class="caption">Role: Manager</p>
+                        <p class="caption">Availability: Active</p>
+                        <p class="caption">Reachability: reachable</p>
+                        <v-divider></v-divider>
+                        <v-data-table
+                                v-bind:headers="headers"
+                                v-bind:items="items"
+                                hide-actions
+                        >
+                            <template slot="items" scope="props">
+                                <td class="text-xs-left">{{ props.item.name }}</td>
+                                <td class="text-xs-right">
+                                    <v-icon v-if="props.item.status=='running'" class="green--text">access_time</v-icon>
+                                    <v-icon v-else-if="props.item.status=='stop'" class="red--text">stop</v-icon>
+                                    <v-progress-circular v-else indeterminate class="amber--text" size="24"></v-progress-circular>
+                                </td>
+                            </template>
+                        </v-data-table>
+                    </v-card-text>
                     <v-card-actions>
-                        <v-btn flat class="orange--text">Share</v-btn>
-                        <v-btn flat class="orange--text">Explore</v-btn>
+                        <v-btn flat class="orange--text">EDIT</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-flex>
-            <v-flex d-flex xs6 md4 lg3 xl2>
-                <v-card dark tile flat>
+            <v-flex xs6 md4 lg3 xl3>
+                <v-card>
                     <v-card-title primary-title>
                         <div>
                             <h3 class="headline mb-0">Node 1</h3>
@@ -34,60 +66,34 @@
     export default {
         data () {
             return {
-                movieList: [
+                headers: [
                     {
-                        name: '肖申克的救赎',
-                        url: 'https://movie.douban.com/subject/1292052/',
-                        rate: 9.6
+                        text: 'Name',
+                        align: 'left',
+                        sortable: false,
+                        value: 'name'
                     },
                     {
-                        name: '这个杀手不太冷',
-                        url: 'https://movie.douban.com/subject/1295644/',
-                        rate: 9.4
-                    },
-                    {
-                        name: '霸王别姬',
-                        url: 'https://movie.douban.com/subject/1291546/',
-                        rate: 9.5
-                    },
-                    {
-                        name: '阿甘正传',
-                        url: 'https://movie.douban.com/subject/1292720/',
-                        rate: 9.4
-                    },
-                    {
-                        name: '美丽人生',
-                        url: 'https://movie.douban.com/subject/1292063/',
-                        rate: 9.5
-                    },
-                    {
-                        name: '千与千寻',
-                        url: 'https://movie.douban.com/subject/1291561/',
-                        rate: 9.2
-                    },
-                    {
-                        name: '辛德勒的名单',
-                        url: 'https://movie.douban.com/subject/1295124/',
-                        rate: 9.4
-                    },
-                    {
-                        name: '海上钢琴师',
-                        url: 'https://movie.douban.com/subject/1292001/',
-                        rate: 9.2
-                    },
-                    {
-                        name: '机器人总动员',
-                        url: 'https://movie.douban.com/subject/2131459/',
-                        rate: 9.3
-                    },
-                    {
-                        name: '盗梦空间',
-                        url: 'https://movie.douban.com/subject/3541415/',
-                        rate: 9.2
+                        text: 'Status',
+                        align: 'right',
+                        sortable: false,
+                        value: 'status'
                     }
                 ],
-                randomMovieList: [],
-                randomMovieList1: []
+                items: [
+                    {
+                        status: 'stop',
+                        name: 'Frozen Yogurt'
+                    },
+                    {
+                        status: 'running',
+                        name: 'Ice cream sandwich'
+                    },
+                    {
+                        status: 'created',
+                        name: 'Created sandwich'
+                    }
+                ]
             }
         },
         methods: {

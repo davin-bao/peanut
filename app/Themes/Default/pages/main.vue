@@ -1,6 +1,10 @@
 <style scoped>
     @import '../styles/fonts.css';
     @import '../styles/app.css';
+
+    .system-bar {
+        background-color: rgba(0,0,0,0)!important;
+    }
 </style>
 <template>
     <v-app id="example-1" toolbar footer :dark="dark">
@@ -18,7 +22,7 @@
                 overflow
         >
             <v-list>
-                <v-list-group v-for="item in menus">
+                <v-list-group v-for="item in menu">
                     <v-list-tile :to="item.href" slot="item" router ripple :title="$t(item.title)" v-model="item.active">
                         <v-list-tile-action>
                             <v-icon>{{ item.icon }}</v-icon>
@@ -51,13 +55,10 @@
         </v-toolbar>
         <main>
             <v-container fluid>
-                <v-system-bar class="primary" lights-out>
+                <v-system-bar class="primary">
                     <v-spacer></v-spacer>
-                    <v-breadcrumbs divider="/" justify-left>
-                        <v-breadcrumbs-item
-                                v-for="item in breadcrumbs" :key="item.text"
-                                :disabled="item.disabled"
-                        >
+                    <v-breadcrumbs divider="/">
+                        <v-breadcrumbs-item v-for="item in breadcrumbs" :key="item.text">
                             {{ $t(item.text) }}
                         </v-breadcrumbs-item>
                     </v-breadcrumbs>
@@ -76,20 +77,15 @@
     </v-app>
 </template>
 <script>
+    import { mapState } from 'vuex';
     export default {
         data () {
             return {
-                message: {},
                 drawer: true,
                 dark: true,
                 mini: false,
                 locales: ['en-US', 'zh-CN'],
-                breadcrumbs: [],
-                menus: [
-                    {title: 'menu.dashboard', icon: 'home', href: '/'},
-                    {title: 'menu.stack', icon: 'domain', href: '/stack'},
-                    {title: 'menu.stack', icon: 'domain', href: '/service'}
-                ]
+                breadcrumbs: [{ text: 'menu.home'}, { text: 'menu.dashboard'}]
             }
         },
         methods: {
@@ -119,6 +115,9 @@
                 });
 
             }
+        },
+        computed: {
+                ...mapState(['message', 'menu', 'pageTitle'])
         }
     }
 </script>
