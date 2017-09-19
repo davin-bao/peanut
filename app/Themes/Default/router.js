@@ -1,17 +1,17 @@
-const routers = [
-    {
-        path: '/',
-        meta: {
-            title: '',
-        },
-        component: (resolve) => require(['./vues/index.vue'], resolve)
-    },
-    {
-        path: '/stack',
-        meta: {
-            title: ''
-        },
-        component: (resolve) => require(['./vues/stack.vue'], resolve)
+function route (path, file, name, children) {
+    return {
+        exact: true,
+        path,
+        name,
+        children,
+        component: require(`./pages/${file}.vue`)
     }
+}
+
+const routers = [
+    route('/', 'main', null, [
+        route('/', 'home', 'home'),
+        route('/stack', 'stack', 'stack')
+    ])
 ];
 export default routers;

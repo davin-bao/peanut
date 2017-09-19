@@ -18,8 +18,8 @@
                 overflow
         >
             <v-list>
-                <v-list-group v-for="item in menus" :value="item.active" v-bind:key="item.title">
-                    <v-list-tile slot="item" v-model="item.active" :title="$t(item.title)" :key='item.href' :href='item.href' v-bind:router='true'>
+                <v-list-group v-for="item in menus">
+                    <v-list-tile :to="item.href" slot="item" router ripple :title="$t(item.title)" v-model="item.active">
                         <v-list-tile-action>
                             <v-icon>{{ item.icon }}</v-icon>
                         </v-list-tile-action>
@@ -51,14 +51,17 @@
         </v-toolbar>
         <main>
             <v-container fluid>
-                <v-breadcrumbs divider="/" offset-y>
-                    <v-breadcrumbs-item
-                            v-for="item in breadcrumbs" :key="item.text"
-                            :disabled="item.disabled"
-                    >
-                        {{ item.text }}
-                    </v-breadcrumbs-item>
-                </v-breadcrumbs>
+                <v-system-bar class="primary" lights-out>
+                    <v-spacer></v-spacer>
+                    <v-breadcrumbs divider="/" justify-left>
+                        <v-breadcrumbs-item
+                                v-for="item in breadcrumbs" :key="item.text"
+                                :disabled="item.disabled"
+                        >
+                            {{ $t(item.text) }}
+                        </v-breadcrumbs-item>
+                    </v-breadcrumbs>
+                </v-system-bar>
                 <div>
                     <v-alert v-bind='message' v-model='message.show' :error='message.error' :info='message.info' :success='message.success' dismissible transition="slide-y-transition">
                         {{message.body}}
@@ -84,7 +87,8 @@
                 breadcrumbs: [],
                 menus: [
                     {title: 'menu.dashboard', icon: 'home', href: '/'},
-                    {title: 'menu.stack', icon: 'domain', href: '#/stack'}
+                    {title: 'menu.stack', icon: 'domain', href: '/stack'},
+                    {title: 'menu.stack', icon: 'domain', href: '/service'}
                 ]
             }
         },
@@ -102,11 +106,16 @@
         },
         watch: {
             '$route' (to, from) {
-                this.breadcrumbs.push({ text: "首页"});
-                this.menus.forEach(function(menu) {
-                    if(to.hash == menu.href || (to.hash == '' && menu.href == '/')){
+                var self = this;
+                self.breadcrumbs = [{ text: "menu.home"}];
+                self.menus.forEach(function(menu) {
+                    if(to.path == menu.href || (to.path == '' && menu.href == '/')){
                         menu.active = true;
+                        self.breadcrumbs.push({ text: menu.title});
+                    }else{
+                        menu.active = false;
                     }
+                    console.log(menu);
                 });
 
             }
