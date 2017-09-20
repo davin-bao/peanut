@@ -2,8 +2,6 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import menu from '../menu';
-import jsonpAdapter from 'axios-jsonp';
-import jsonp from 'jsonp-promise';
 
 Vue.use(Vuex);
 

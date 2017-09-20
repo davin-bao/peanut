@@ -40,7 +40,7 @@
             <v-toolbar-title>{{ $t("title") }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-menu offset-y>
-                <v-btn fab slot="activator">
+                <v-btn icon slot="activator">
                     <v-icon>language</v-icon>
                 </v-btn>
                 <v-list>
@@ -49,6 +49,9 @@
                     </v-list-tile>
                 </v-list>
             </v-menu>
+            <v-btn icon @click.stop="dark = !dark">
+                    <v-icon>style</v-icon>
+            </v-btn>
             <v-btn icon>
                 <v-icon>account_circle</v-icon>
             </v-btn>
@@ -88,7 +91,7 @@
         data () {
             return {
                 drawer: true,
-                dark: true,
+                dark: false,
                 mini: false,
                 locales: ['en-US', 'zh-CN'],
                 breadcrumbs: [{ text: 'menu.home'}, { text: 'menu.dashboard'}]
