@@ -1,24 +1,68 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 import menu from '../menu';
+import jsonpAdapter from 'axios-jsonp';
+import jsonp from 'jsonp-promise';
+
 Vue.use(Vuex);
+
+const NODES_PATH = '/nodes';
+const CONTAINERS_PATH = '/containers';
 
 const store = new Vuex.Store({
     state: {
         pageTitle: 'Home',
         menu: menu,
-        nodes: [],
+        endpoint: 'http://peanut.local',
+        nodes: {loading: null, data: []},
+        containers: {loading: null, data: []},
         message: {
             show: false,
             body: null,
-            success: null,
-            error: null,
-            info: null,
+            type: null
         }
     },
     mutations: {
-        getNodes (state) {
+        async getNodes (state) {
+            state.nodes.loading = true;
+            state.nodes.data = [];
+            try{
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + NODES_PATH
+                });
+                if(response.status !== 200){
+                    state.message = {body: 'get endpoint error [' + response.statusText + ']', show: true, type: 'error'};
+                }
 
+                state.nodes.data = response.data;
+                await this.commit('getContainers');
+                state.nodes.loading = false;
+            }catch(e){
+                state.message = {body: 'get nodes error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async getContainers (state){
+            state.containers.loading = true;
+            state.containers.data = [];
+
+            for(var i=0; i<state.nodes.data.length; i++){
+                var nodeId = state.nodes.data[i].ID;
+                var address = state.nodes.data[i].ManagerStatus.Addr;
+                var endpoint = address.substring(0, address.indexOf(':'));
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + CONTAINERS_PATH + '/' + endpoint
+                });
+                if(response.status !== 200){
+                    state.message = {body: 'get containers error [' + response.statusText + ']', show: true, type: 'error'};
+                }
+                state.containers.data[nodeId] = response.data;
+                state.nodes.data[i].containers = response.data;
+                console.log(nodeId, state.nodes.data[i].containers);
+            }
+            state.containers.loading = false;
         },
         setMenu (state, data) {
             state.menu = data
@@ -27,18 +71,7 @@ const store = new Vuex.Store({
             state.pageTitle = data
         },
         showMessage (state, message) {
-            state.message = {body: message.body, show: true};
-            switch (message.type){
-                case 'success':
-                    state.message.success = true;
-                    break;
-                case 'error':
-                    state.message.error = true;
-                    break;
-                case 'info':
-                    state.message.info = true;
-                    break;
-            }
+            state.message = {body: message.body, show: true, type: message.type};
         }
     },
     actions: {

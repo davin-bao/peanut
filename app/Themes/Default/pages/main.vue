@@ -64,7 +64,13 @@
                     </v-breadcrumbs>
                 </v-system-bar>
                 <div>
-                    <v-alert v-bind='message' v-model='message.show' error='message.error' info='message.info' success='message.success' dismissible transition="slide-y-transition">
+                    <v-alert v-bind='message' v-model='message.show' v-if="message.type=='success'" success dismissible transition="slide-y-transition">
+                        {{message.body}}
+                    </v-alert>
+                    <v-alert v-bind='message' v-model='message.show' v-if="message.type=='error'" error dismissible transition="slide-y-transition">
+                        {{message.body}}
+                    </v-alert>
+                    <v-alert v-bind='message' v-model='message.show' v-if="message.type=='info'" info dismissible transition="slide-y-transition">
                         {{message.body}}
                     </v-alert>
                 </div>
@@ -98,7 +104,7 @@
             }
         },
         mounted () {
-            //this.changeLocale();
+
         },
         watch: {
             '$route' (to, from) {

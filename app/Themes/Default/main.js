@@ -11,6 +11,8 @@ import '../../../node_modules/vuetify/dist/vuetify.min.css';
 import VueI18n from 'vue-i18n';
 import messages from './lang.js';
 import store from './store/';
+import VSubstr from './components/Substr.vue';
+
 global.store = store;
 
 Vue.use(Vuex);
@@ -42,6 +44,8 @@ router.afterEach((to, from, next) => {
     //iView.LoadingBar.finish();
     window.scrollTo(0, 0);
 });
+
+Vue.component('v-substr', VSubstr);
 
 new Vue({
     el: '#app',

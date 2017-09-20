@@ -11,5 +11,7 @@
 |
 */
 $router->get('nodes', ['as' => 'node_list', 'uses' => 'NodeController@getList']);
+$router->get('nodes/endpoint', ['as' => 'node_list', 'uses' => 'NodeController@getEndpoint']);
+$router->get('containers/{endpoint}', ['as' => 'container_list', 'uses' => 'ContainerController@getList']);
 
 $router->get('/', ['as' => 'index', 'uses' => 'IndexController@getIndex']);

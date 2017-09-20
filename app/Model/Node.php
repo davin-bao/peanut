@@ -8,25 +8,25 @@ class Node extends DockerApiModel {
     }
 
     public static function find(){
-        $nodeList = [];
-        $nodeDataList = Node::HttpGet('nodes');
+        $result = [];
+        $list = Node::HttpGet('nodes');
 
-        foreach($nodeDataList as $nodeData){
-            array_push($nodeList, new Node([
-                'ID' => $nodeData->ID,
-                'Version' => $nodeData->Version->Index,
-                'CreatedAt' => $nodeData->CreatedAt,
-                'UpdatedAt' => $nodeData->UpdatedAt,
-                'Name' => isset($nodeData->Spec->Name) ? $nodeData->Spec->Name : '',
-                'Availability' => $nodeData->Spec->Availability,
-                'Labels' => $nodeData->Spec->Labels,
-                'Role' => $nodeData->Spec->Role,
-                'Description'=> $nodeData->Description,
-                'Status' => $nodeData->Status,
-                'ManagerStatus' => $nodeData->ManagerStatus
+        foreach($list as $item){
+            array_push($result, new Node([
+                'ID' => $item->ID,
+                'Version' => $item->Version->Index,
+                'CreatedAt' => $item->CreatedAt,
+                'UpdatedAt' => $item->UpdatedAt,
+                'Name' => isset($item->Spec->Name) ? $item->Spec->Name : '',
+                'Availability' => $item->Spec->Availability,
+                'Labels' => $item->Spec->Labels,
+                'Role' => $item->Spec->Role,
+                'Description'=> $item->Description,
+                'Status' => $item->Status,
+                'ManagerStatus' => isset($item->ManagerStatus) ? $item->ManagerStatus : '',
             ]));
         }
-        return $nodeList;
+        return $result;
     }
 
     public function update($availability, $name, $role, $labels){

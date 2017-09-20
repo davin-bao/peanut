@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Node;
+use App\Model\Container;
 
-class NodeController extends Controller
+class ContainerController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -16,13 +16,13 @@ class NodeController extends Controller
         //
     }
 
-    public function getList(){
+    public function getList($endpoint){
         $result = [];
-        $list = Node::find();
+        $list = Container::find($endpoint);
         foreach($list as $item){
             array_push($result, $item->toArray());
         }
-        sleep(3);
+        sleep(1);
 
         return $this->response($result);
     }

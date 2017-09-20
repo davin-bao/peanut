@@ -20,16 +20,16 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         $this->attributes = $attributes;
     }
 
-    private static function getUri(){
-        $host = env('DOCKER_URL');
+    private static function getUri($uri){
+        $host = $uri == null ? env('DOCKER_URL', 'http://127.0.0.1') : 'http://' . $uri;
         $port = env('DOCKER_PORT', '2375');
         $version = env('DOCKER_VERSION', 'v1.30');
 
-        return 'http://'. $host . ':' . $port . '/' . $version . '/';
+        return $host . ':' . $port . '/' . $version . '/';
     }
 
-    protected static function HttpGet($path){
-        $url = static::getUri() . $path;
+    protected static function HttpGet($path, $uri = null){
+        $url = static::getUri($uri) . $path;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
@@ -39,19 +39,17 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        $body = json_decode($body);
-
         if($httpCode !== 200) {
-            throw new HttpException($httpCode, $body->message);
+            throw new HttpException($httpCode);
         } else {
+            $body = json_decode($body);
             return $body;
         }
     }
 
 
-    protected static function HttpPost($path, $params){
-
-        $url = static::getUri() . $path;
+    protected static function HttpPost($path, $params, $uri = null){
+        $url = static::getUri($uri) . $path;
         $params_str = json_encode($params);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
