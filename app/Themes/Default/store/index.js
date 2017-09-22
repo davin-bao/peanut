@@ -12,6 +12,7 @@ const store = new Vuex.Store({
     state: {
         pageTitle: 'Home',
         menu: menu,
+        breadcrumbs: [],
         endpoint: 'http://peanut.local',
         nodes: {loading: null, data: []},
         containers: {loading: null, data: []},
@@ -61,6 +62,9 @@ const store = new Vuex.Store({
                 console.log(nodeId, state.nodes.data[i].containers);
             }
             state.containers.loading = false;
+        },
+        setBreadcrumbs (state, breadcrumbs) {
+            state.breadcrumbs = breadcrumbs;
         },
         setMenu (state, data) {
             state.menu = data
