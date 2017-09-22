@@ -22,7 +22,7 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
 
     private static function getUri($uri){
         $host = $uri == null ? env('DOCKER_URL', 'http://127.0.0.1') : 'http://' . $uri;
-        $port = env('DOCKER_PORT', '2375');
+        $port = env('DOCKER_PORT', '2376');
         $version = env('DOCKER_VERSION', 'v1.30');
 
         return $host . ':' . $port . '/' . $version . '/';

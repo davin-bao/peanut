@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Container;
+use App\Model\Network;
 
-class ContainerController extends Controller
+class NetworkController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -16,10 +16,9 @@ class ContainerController extends Controller
         //
     }
 
-    public function getList($endpoint){
+    public function getList(){
         $result = [];
-        $endpoint = str_replace('-', '.', $endpoint);
-        $list = Container::find($endpoint);
+        $list = Network::find();
         foreach($list as $item){
             array_push($result, $item->toArray());
         }

@@ -11,7 +11,8 @@ function route (path, file, name, children) {
 const routers = [
     route('/', 'main', null, [
         route('/', 'home', 'home'),
-        route('/stack', 'stack', 'stack')
+        route('/stack', 'stack', 'stack'),
+        route('/network', 'Network', 'network')
     ])
 ];
 export default routers;

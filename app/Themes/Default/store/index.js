@@ -7,15 +7,17 @@ Vue.use(Vuex);
 
 const NODES_PATH = '/nodes';
 const CONTAINERS_PATH = '/containers';
+const NETWORKS_PATH = '/networks';
 
 const store = new Vuex.Store({
     state: {
         pageTitle: 'Home',
         menu: menu,
         breadcrumbs: [],
-        endpoint: 'http://peanut.local',
+        endpoint: 'http://localhost:8000',
         nodes: {loading: null, data: []},
         containers: {loading: null, data: []},
+        networks: {loading: null, data: []},
         message: {
             show: false,
             body: null,
@@ -49,7 +51,7 @@ const store = new Vuex.Store({
             for(var i=0; i<state.nodes.data.length; i++){
                 var nodeId = state.nodes.data[i].ID;
                 var address = state.nodes.data[i].ManagerStatus.Addr;
-                var endpoint = address.substring(0, address.indexOf(':'));
+                var endpoint = address.substring(0, address.indexOf(':')).split('.').join('-');
                 var response = await axios({
                     method: 'get',
                     url: state.endpoint + CONTAINERS_PATH + '/' + endpoint
@@ -62,6 +64,21 @@ const store = new Vuex.Store({
                 console.log(nodeId, state.nodes.data[i].containers);
             }
             state.containers.loading = false;
+        },
+        async getNetworks (state){
+            state.networks.loading = true;
+            state.networks.data = [];
+
+            var response = await axios({
+                method: 'get',
+                url: state.endpoint + NETWORKS_PATH
+            });
+            if(response.status !== 200){
+                state.message = {body: 'get containers error [' + response.statusText + ']', show: true, type: 'error'};
+            }
+            state.networks.data = response.data;
+
+            state.networks.loading = false;
         },
         setBreadcrumbs (state, breadcrumbs) {
             state.breadcrumbs = breadcrumbs;
