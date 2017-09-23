@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\Node;
+use Illuminate\Http\Request;
 
 class NodeController extends Controller
 {
@@ -25,6 +26,17 @@ class NodeController extends Controller
         sleep(3);
 
         return $this->response($result);
+    }
+
+    public function postUpdate($id, Request $request){
+        $availability = $request->get('availability', null);
+        $name = $request->get('name', null);
+        $role = $request->get('role', null);
+        $labels = $request->get('labels', null);
+        $node = Node::get($id);
+        $node->update($availability, $name, $role, $labels);
+
+        return $this->response([]);
     }
 
     //

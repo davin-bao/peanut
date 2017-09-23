@@ -50,7 +50,8 @@
                             </v-data-table>
                         </v-card-text>
                         <v-card-actions>
-                            <v-btn flat class="orange--text">EDIT</v-btn>
+                            <v-spacer></v-spacer>
+                            <v-btn flat class="orange--text" :to="'/node/'+item.ID"><v-icon>visibility</v-icon>DETAIL</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-flex>
@@ -94,7 +95,8 @@
             }
         },
         methods: {
-            changeLimit () {
+            showNodeDetail (id) {
+                console.log(id);
             }
         },
         mounted () {

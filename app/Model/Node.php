@@ -4,7 +4,21 @@ namespace App\Model;
 class Node extends DockerApiModel {
 
     public function get($id){
-        $nodeInfo = $this->HttpGet('nodes/' + $id);
+        $item = $this->HttpGet('nodes/' + $id);
+
+        return new Node([
+            'ID' => $item->ID,
+            'Version' => $item->Version->Index,
+            'CreatedAt' => $item->CreatedAt,
+            'UpdatedAt' => $item->UpdatedAt,
+            'Name' => isset($item->Spec->Name) ? $item->Spec->Name : '',
+            'Availability' => $item->Spec->Availability,
+            'Labels' => $item->Spec->Labels,
+            'Role' => $item->Spec->Role,
+            'Description'=> $item->Description,
+            'Status' => $item->Status,
+            'ManagerStatus' => isset($item->ManagerStatus) ? $item->ManagerStatus : '',
+        ]);
     }
 
     public static function find(){
