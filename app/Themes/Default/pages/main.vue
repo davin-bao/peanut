@@ -93,8 +93,7 @@
                 drawer: true,
                 dark: false,
                 mini: false,
-                locales: ['en-US', 'zh-CN'],
-                breadcrumbs: [{ text: 'menu.home'}, { text: 'menu.dashboard'}]
+                locales: ['en-US', 'zh-CN']
             }
         },
         methods: {
@@ -107,12 +106,10 @@
             }
         },
         mounted () {
-
         },
         watch: {
             '$route' (to, from) {
                 var self = this;
-                self.breadcrumbs = [{ text: "menu.home"}];
                 self.menus.forEach(function(menu) {
                     if(to.path == menu.href || (to.path == '' && menu.href == '/')){
                         menu.active = true;
@@ -121,11 +118,10 @@
                         menu.active = false;
                     }
                 });
-
             }
         },
         computed: {
-                ...mapState(['message', 'menu', 'pageTitle'])
+                ...mapState(['message', 'menu', 'pageTitle', 'breadcrumbs'])
         }
     }
 </script>

@@ -88,11 +88,12 @@
         }
     },
     mounted () {
+        this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.stack'}]);
         this.getDataFromApi()
                 .then(data => {
             this.items = data.items
             this.totalItems = data.total
-        })
+        });
     },
     methods: {
         getDataFromApi () {

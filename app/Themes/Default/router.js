@@ -12,7 +12,8 @@ const routers = [
     route('/', 'Main', null, [
         route('/', 'Home', 'home'),
         route('/node/:id', 'NodeDetail', 'node_detail'),
-        route('/stack', 'Stack', 'stack')
+        route('/stack', 'Stack', 'stack'),
+        route('/network', 'Network', 'network')
     ])
 ];
 export default routers;

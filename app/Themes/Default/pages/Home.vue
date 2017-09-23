@@ -100,6 +100,7 @@
             }
         },
         mounted () {
+            this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.dashboard'}]);
             this.$store.commit('getNodes');
         },
         computed: {

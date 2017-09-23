@@ -4,7 +4,8 @@ module.exports = {
         menu: {
             home: 'Home',
             dashboard: 'Dashboard',
-            stack: 'Stack'
+            stack: 'Stack',
+            networks: 'Network'
         },
 
     },
@@ -13,7 +14,8 @@ module.exports = {
         menu: {
             home: '首页',
             dashboard: '控制面板',
-            stack: '应用栈'
+            stack: '应用栈',
+            networks: '网络'
         }
     },
 };
