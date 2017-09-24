@@ -19,7 +19,7 @@ Vue.use(Vuex);
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-    locale: 'en-us', // set locale
+    locale: 'en-US', // set locale
     messages, // set locale messages
 });
 

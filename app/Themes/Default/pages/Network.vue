@@ -95,12 +95,14 @@
         },
         methods: {
             getData () {
+                var self = this;
                 return new Promise((resolve, reject) => {
-                    this.loading = true;
-                    const { sortBy, descending, page, rowsPerPage } = this.pagination;
-
-                    let items = this.networks.data;
-                    const total = items.length;
+                    self.loading = true;
+                    const { sortBy, descending, page, rowsPerPage } = self.pagination;
+                    //while(self.networks.loading){
+                        let items = self.networks.data;
+                        const total = items.length;
+                    //}
 
                     if (rowsPerPage > 0) {
                         items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)

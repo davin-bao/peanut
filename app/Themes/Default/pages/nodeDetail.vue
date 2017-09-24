@@ -1,78 +1,101 @@
 <style scoped>
-    .system-bar {
+    .content-toolbar {
         background-color: rgba(0,0,0,0)!important;
     }
 </style>
 <template>
-    <v-container
-            fluid
-            style="min-height: 0;"
-            grid-list-lg
-    >
+    <v-container fluid grid-list-md>
         <v-layout row wrap>
-            <v-layout row wrap>
-                <v-flex xs12>
-                    <v-system-bar>
-                        <v-btn success fab small>
-                            <v-icon>edit</v-icon>
-                        </v-btn>
-                    </v-system-bar>
-                </v-flex>
-            </v-layout>
-            <v-flex xs12>
-                <v-subheader>Node specification</v-subheader>
-                <p class="caption">CPU Core: 15</p>
-                <p class="caption">Memory(G): 16</p>
-                <p class="caption">Platform: dfsdfsdf</p>
+            <v-flex d-flex xs12 sm12 md12>
+                <v-divider></v-divider>
             </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-            <v-flex xs12>
-                <v-subheader>Node specification</v-subheader>
-                <p class="caption">CPU Core: 15</p>
-                <p class="caption">Memory(G): 16</p>
-                <p class="caption">Platform: dfsdfsdf</p>
+            <v-flex d-flex xs12 sm12 md12>
+                <v-toolbar flat small class="content-toolbar">
+                    <v-spacer></v-spacer>
+                    <v-btn icon>
+                        <v-icon>edit</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                        <v-icon>delete</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                        <v-icon>refresh</v-icon>
+                    </v-btn>
+                </v-toolbar>
             </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-            <v-flex xs12>
-                <v-data-table
-                        v-bind:headers="headers"
-                        v-bind:items="items"
-                        v-bind:search="search"
-                        v-bind:pagination.sync="pagination"
-                        :total-items="totalItems"
-                        :loading="loading"
-                        class="elevation-1"
-                >
-                    <template slot="headerCell" scope="props">
-        <span v-tooltip:bottom="{ 'html': props.header.text }">
-          {{ props.header.text }}
-        </span>
-                    </template>
-                    <template slot="items" scope="props">
-                        <td>{{ props.item.name }}</td>
-                        <td  class="text-xs-right">{{ props.item.calories }}</td>
-                        <td  class="text-xs-right">{{ props.item.fat }}</td>
-                        <td  class="text-xs-right">{{ props.item.carbs }}</td>
-                        <td  class="text-xs-right">{{ props.item.protein }}</td>
-                        <td  class="text-xs-right">{{ props.item.sodium }}</td>
-                        <td  class="text-xs-right">{{ props.item.calcium }}</td>
-                        <td  class="text-xs-right">
-                            <v-btn-toggle small>
-                                <v-btn flat primary>
-                                    <v-icon>visibility</v-icon>
-                                </v-btn>
-                                <v-btn flat success>
-                                    <v-icon>edit</v-icon>
-                                </v-btn>
-                                <v-btn flat error>
-                                    <v-icon>delete</v-icon>
-                                </v-btn>
-                            </v-btn-toggle>
-                        </td>
-                    </template>
-                </v-data-table>
+            <v-flex d-flex xs12 sm6 md4>
+                <v-card flat>
+                    <v-card-title class="title">Node specification</v-card-title>
+                    <v-card-text>
+                        <p class="caption">CPU Core: 15</p>
+                        <p class="caption">Memory(G): 16</p>
+                        <p class="caption">Platform: dfsdfsdf</p>
+                    </v-card-text>
+                </v-card>
+            </v-flex>
+            <v-flex d-flex xs12 sm6 md4>
+                <v-card flat>
+                    <v-card-title class="title">Node specification</v-card-title>
+                    <v-card-text>
+                        <p class="caption">CPU Core: 15</p>
+                        <p class="caption">Memory(G): 16</p>
+                        <p class="caption">Platform: dfsdfsdf</p>
+                    </v-card-text>
+                </v-card>
+            </v-flex>
+            <v-flex d-flex xs12 sm6 md4>
+                <v-card flat>
+                    <v-card-title class="title">Node specification</v-card-title>
+                    <v-card-text>
+                        <p class="caption">CPU Core: 15</p>
+                        <p class="caption">Memory(G): 16</p>
+                        <p class="caption">Platform: dfsdfsdf</p>
+                    </v-card-text>
+                </v-card>
+            </v-flex>
+            <v-flex d-flex xs12 sm12 md12>
+                <v-card flat>
+                    <v-card-title class="title">Tasks</v-card-title>
+                    <v-card-text>
+                        <v-data-table
+                                v-bind:headers="headers"
+                                v-bind:items="items"
+                                v-bind:search="search"
+                                v-bind:pagination.sync="pagination"
+                                :total-items="totalItems"
+                                :loading="loading"
+                                class="elevation-1"
+                        >
+                            <template slot="headerCell" scope="props">
+            <span v-tooltip:bottom="{ 'html': props.header.text }">
+              {{ props.header.text }}
+            </span>
+                            </template>
+                            <template slot="items" scope="props">
+                                <td>{{ props.item.name }}</td>
+                                <td  class="text-xs-right">{{ props.item.calories }}</td>
+                                <td  class="text-xs-right">{{ props.item.fat }}</td>
+                                <td  class="text-xs-right">{{ props.item.carbs }}</td>
+                                <td  class="text-xs-right">{{ props.item.protein }}</td>
+                                <td  class="text-xs-right">{{ props.item.sodium }}</td>
+                                <td  class="text-xs-right">{{ props.item.calcium }}</td>
+                                <td  class="text-xs-right">
+                                    <v-btn-toggle small>
+                                        <v-btn flat primary>
+                                            <v-icon>visibility</v-icon>
+                                        </v-btn>
+                                        <v-btn flat success>
+                                            <v-icon>edit</v-icon>
+                                        </v-btn>
+                                        <v-btn flat error>
+                                            <v-icon>delete</v-icon>
+                                        </v-btn>
+                                    </v-btn-toggle>
+                                </td>
+                            </template>
+                        </v-data-table>
+                    </v-card-text>
+                </v-card>
             </v-flex>
         </v-layout>
     </v-container>
@@ -119,6 +142,7 @@
             }
         },
         mounted () {
+            this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'nouns.node_detail'}]);
             this.initItem();
 
             this.getDataFromApi()

@@ -22,7 +22,7 @@
                 overflow
         >
             <v-list>
-                <v-list-group v-for="item in menu">
+                <v-list-group v-for="item in menu"  :key="item.href">
                     <v-list-tile :to="item.href" slot="item" router ripple :title="$t(item.title)" v-model="item.active">
                         <v-list-tile-action>
                             <v-icon>{{ item.icon }}</v-icon>
@@ -58,13 +58,13 @@
         </v-toolbar>
         <main>
             <v-container fluid>
-                <v-system-bar class="primary">
-                    <v-spacer></v-spacer>
+                <v-system-bar status>
                     <v-breadcrumbs divider="/">
                         <v-breadcrumbs-item v-for="item in breadcrumbs" :key="item.text">
                             {{ $t(item.text) }}
                         </v-breadcrumbs-item>
                     </v-breadcrumbs>
+                    <v-spacer></v-spacer>
                 </v-system-bar>
                 <div>
                     <v-alert v-bind='message' v-model='message.show' v-if="message.type=='success'" success dismissible transition="slide-y-transition">
@@ -108,17 +108,17 @@
         mounted () {
         },
         watch: {
-            '$route' (to, from) {
-                var self = this;
-                self.menus.forEach(function(menu) {
-                    if(to.path == menu.href || (to.path == '' && menu.href == '/')){
-                        menu.active = true;
-                        self.breadcrumbs.push({ text: menu.title});
-                    }else{
-                        menu.active = false;
-                    }
-                });
-            }
+//            '$route' (to, from) {
+//                var self = this;
+//                self.menus.forEach(function(menu) {
+//                    if(to.path == menu.href || (to.path == '' && menu.href == '/')){
+//                        menu.active = true;
+//                        self.breadcrumbs.push({ text: menu.title});
+//                    }else{
+//                        menu.active = false;
+//                    }
+//                });
+//            }
         },
         computed: {
                 ...mapState(['message', 'menu', 'pageTitle', 'breadcrumbs'])

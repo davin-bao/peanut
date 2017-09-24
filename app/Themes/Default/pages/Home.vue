@@ -18,7 +18,7 @@
                             </div>
                             <v-divider></v-divider>
                             <div class="text-xs-left">
-                                <v-chip label class="pink white--text" v-for="(value, index) in item.Labels"> {{ index + '=' + value }} </v-chip>
+                                <v-chip label class="pink white--text" v-for="(value, index) in item.Labels" :key="value"> {{ index + '=' + value }} </v-chip>
                             </div>
                             <v-divider></v-divider>
                             <p></p>
