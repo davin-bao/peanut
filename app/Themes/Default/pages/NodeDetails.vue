@@ -27,7 +27,7 @@
                 <v-card flat>
                     <v-card-title class="title">Node specification</v-card-title>
                     <v-card-text>
-                        <p class="caption">CPU Core: 15</p>
+                        <p class="caption">Name: {{ item.Name }}</p>
                         <p class="caption">Memory(G): 16</p>
                         <p class="caption">Platform: dfsdfsdf</p>
                     </v-card-text>
@@ -153,7 +153,12 @@
         },
         methods: {
             initItem() {
-                console.log(this.$route.params.id);
+                var self = this;
+                for(let i=0; i<this.nodes.length; i++){
+                    if(this.nodes[i].ID == self.$route.params.id){
+                        self.item = this.nodes[i];
+                    }
+                }
             },
             getDataFromApi () {
                 this.loading = true

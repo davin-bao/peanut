@@ -12,17 +12,18 @@
         </v-system-bar>
         <v-data-table
                 v-bind:headers="headers"
-                v-bind:items="items"
+                v-bind:items="networks.data"
                 v-bind:search="search"
                 v-bind:pagination.sync="pagination"
                 :total-items="totalItems"
-                :loading="loading"
+                :loading="networks.loading"
                 class="elevation-1"
+                :rows-per-page-items="pageCount"
         >
             <template slot="headerCell" scope="props">
-        <span v-tooltip:bottom="{ 'html': props.header.text }">
-          {{ props.header.text }}
-        </span>
+                <span v-tooltip:bottom="{ 'html': props.header.text }">
+                  {{ props.header.text }}
+                </span>
             </template>
             <template slot="items" scope="props">
                 <td>{{ props.item.Id }}</td>
@@ -55,9 +56,9 @@
             return {
                 search: '',
                 totalItems: 0,
-                items: [],
-                loading: true,
-                pagination: {},
+                pagination: {
+                },
+                pageCount: [20, 50, 100, { text: 'All', value: -1 }],
                 headers: [
                     {
                         text: 'Id',
@@ -69,54 +70,18 @@
                     { text: 'Scope', value: 'Scope' },
                     { text: 'Driver', value: 'Driver' },
                     { text: 'Internal', value: 'Internal' }
-                ]
+                ],
+                items: []
             }
         },
         watch: {
-            pagination: {
-                handler () {
-                    this.getData()
-                            .then(data => {
-                        this.items = data.items
-                        this.totalItems = data.total
-                    })
-                },
-                deep: true
-            }
+
         },
         mounted () {
             this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.stack'}]);
             this.$store.commit('getNetworks');
-            this.getData()
-                    .then(data => {
-                this.items = data.items
-                this.totalItems = data.total
-            });
         },
         methods: {
-            getData () {
-                var self = this;
-                return new Promise((resolve, reject) => {
-                    self.loading = true;
-                    const { sortBy, descending, page, rowsPerPage } = self.pagination;
-                    //while(self.networks.loading){
-                        let items = self.networks.data;
-                        const total = items.length;
-                    //}
-
-                    if (rowsPerPage > 0) {
-                        items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-                    }
-
-                    setTimeout(() => {
-                        this.loading = false;
-                        resolve({
-                            items,
-                            total
-                        })
-                    }, 1000)
-                })
-            }
         },
         computed: {
             ...mapState(['message', 'networks'])

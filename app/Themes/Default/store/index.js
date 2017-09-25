@@ -14,7 +14,7 @@ const store = new Vuex.Store({
         pageTitle: 'Home',
         menu: menu,
         breadcrumbs: [],
-        endpoint: 'http://localhost:8000',
+        endpoint: 'http://peanut.local',
         nodes: {loading: null, data: []},
         containers: {loading: null, data: []},
         networks: {loading: null, data: []},
