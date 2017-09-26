@@ -10,8 +10,14 @@ module.exports = {
             network: 'Network'
         },
         nouns: {
+            save: 'Save',
             node: 'Node',
-            node_detail: 'Node Detail'
+            node_detail: 'Node Detail',
+            network_create: 'Create Network',
+            network_detail: 'Network Detail'
+        },
+        validate: {
+            required: 'This field is required'
         }
     },
     "zh-CN": {
@@ -25,8 +31,14 @@ module.exports = {
             network: '网络'
         },
         nouns: {
+            save: '保存',
             node: '节点',
-            node_detail: '节点详情'
+            node_detail: '节点详情',
+            network_create: '创建网络',
+            network_detail: '网络详情'
+        },
+        validate: {
+            required: '该字段必填'
         }
     },
 };
