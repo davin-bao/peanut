@@ -15,7 +15,7 @@
                 <v-btn icon>
                     <v-icon>add</v-icon>
                 </v-btn>
-                <v-btn icon :to="delete">
+                <v-btn @click="deleteList()" icon>
                     <v-icon>delete</v-icon>
                 </v-btn>
                 <v-btn icon>
@@ -103,12 +103,14 @@
             this.$store.commit('getNetworks');
         },
         methods: {
-            delete: function(){
-                console.log(this.dialog);
+            deleteList() {
+                this.$store.commit('showDeleteConfirm', function(){
+                    console.log('aaaa');
+                });
             }
         },
         computed: {
-            ...mapState(['message', 'breadcrumbs', 'dialog', 'networks'])
+            ...mapState(['networks'])
         }
     }
 </script>

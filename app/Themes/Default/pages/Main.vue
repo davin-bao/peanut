@@ -76,16 +76,16 @@
                     <v-alert v-bind='message' v-model='message.show' v-if="message.type=='info'" info dismissible transition="slide-y-transition">
                         {{message.body}}
                     </v-alert>
-                    <v-dialog v-model="dialog" lazy absolute>
+                    <v-dialog v-bind='deleteConfirm' v-model='deleteConfirm.show'  v-if="deleteConfirm.show" lazy absolute>
                         <v-card>
                             <v-card-title>
-                                <div class="headline">{{ dialog.title }}</div>
+                                <div class="headline">Confirm</div>
                             </v-card-title>
-                            <v-card-text>{{ dialog.content }}</v-card-text>
+                            <v-card-text>Do you sure delete this ?</v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">OK</v-btn>
-                                <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">Cancel</v-btn>
+                                <v-btn class="green--text darken-1" flat="flat" @click.native="deleteConfirmOk()">OK</v-btn>
+                                <v-btn class="green--text darken-1" flat="flat" @click.native="deleteConfirm.show = false">Cancel</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
@@ -116,6 +116,10 @@
                 }
                 this.$i18n.locale = to;
                 this.$store.commit('showMessage', {type: 'success', body: to});
+            },
+            deleteConfirmOk () {
+                this.deleteConfirm.show = false;
+                this.deleteConfirm.action();
             }
         },
         mounted () {
@@ -134,7 +138,7 @@
 //            }
         },
         computed: {
-                ...mapState(['message', 'menu', 'pageTitle', 'breadcrumbs'])
+                ...mapState(['message', 'deleteConfirm', 'menu', 'pageTitle', 'breadcrumbs'])
         }
     }
 </script>

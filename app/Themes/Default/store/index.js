@@ -23,7 +23,10 @@ const store = new Vuex.Store({
             body: null,
             type: null
         },
-        dialog: false
+        deleteConfirm: {
+            show: false,
+            action: null
+        }
     },
     mutations: {
         async getNodes (state) {
@@ -92,6 +95,9 @@ const store = new Vuex.Store({
         },
         showMessage (state, message) {
             state.message = {body: message.body, show: true, type: message.type};
+        },
+        showDeleteConfirm (state, action) {
+            state.deleteConfirm = { show: true, action: action};
         }
     },
     actions: {
