@@ -76,6 +76,19 @@
                     <v-alert v-bind='message' v-model='message.show' v-if="message.type=='info'" info dismissible transition="slide-y-transition">
                         {{message.body}}
                     </v-alert>
+                    <v-dialog v-model="dialog" lazy absolute>
+                        <v-card>
+                            <v-card-title>
+                                <div class="headline">{{ dialog.title }}</div>
+                            </v-card-title>
+                            <v-card-text>{{ dialog.content }}</v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">OK</v-btn>
+                                <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">Cancel</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                 </div>
                 <router-view></router-view>
             </v-container>

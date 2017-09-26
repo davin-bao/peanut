@@ -7,7 +7,7 @@ module.exports = {
             stack: 'Stack',
             service: 'Service',
             container: 'Container',
-            networks: 'Network'
+            network: 'Network'
         },
         nouns: {
             node: 'Node',
@@ -22,7 +22,7 @@ module.exports = {
             stack: '应用栈',
             service: '服务',
             container: '容器',
-            networks: '网络'
+            network: '网络'
         },
         nouns: {
             node: '节点',

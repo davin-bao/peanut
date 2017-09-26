@@ -22,7 +22,8 @@ const store = new Vuex.Store({
             show: false,
             body: null,
             type: null
-        }
+        },
+        dialog: false
     },
     mutations: {
         async getNodes (state) {

@@ -1,15 +1,28 @@
-<style scoped>
-    .system-bar {
+<style lang="less">
+    .content-toolbar {
         background-color: rgba(0,0,0,0)!important;
+        .toolbar__content {
+            height: auto!important;
+        }
     }
 </style>
 <template>
-    <div>
-        <v-system-bar>
-            <v-btn success fab small>
-                <v-icon>add</v-icon>
-            </v-btn>
-        </v-system-bar>
+    <v-card>
+        <v-card-title>
+            <v-spacer></v-spacer>
+            <v-toolbar flat class="content-toolbar">
+                <v-spacer></v-spacer>
+                <v-btn icon>
+                    <v-icon>add</v-icon>
+                </v-btn>
+                <v-btn icon :to="delete">
+                    <v-icon>delete</v-icon>
+                </v-btn>
+                <v-btn icon>
+                    <v-icon>refresh</v-icon>
+                </v-btn>
+            </v-toolbar>
+        </v-card-title>
         <v-data-table
                 v-bind:headers="headers"
                 v-bind:items="networks.data"
@@ -17,8 +30,10 @@
                 v-bind:pagination.sync="pagination"
                 :total-items="totalItems"
                 :loading="networks.loading"
-                class="elevation-1"
                 :rows-per-page-items="pageCount"
+                v-model="selected"
+                select-all
+                selected-key="Id"
         >
             <template slot="headerCell" scope="props">
                 <span v-tooltip:bottom="{ 'html': props.header.text }">
@@ -26,6 +41,11 @@
                 </span>
             </template>
             <template slot="items" scope="props">
+                <v-checkbox
+                        primary
+                        hide-details
+                        v-model="props.selected"
+                ></v-checkbox>
                 <td>{{ props.item.Id }}</td>
                 <td  class="text-xs-right">{{ props.item.Name }}</td>
                 <td  class="text-xs-right">{{ props.item.Scope }}</td>
@@ -46,7 +66,7 @@
                 </td>
             </template>
         </v-data-table>
-    </div>
+    </v-card>
 </template>
 <script>
     import { mapState } from 'vuex';
@@ -55,6 +75,7 @@
         data () {
             return {
                 search: '',
+                selected: [],
                 totalItems: 0,
                 pagination: {
                 },
@@ -78,13 +99,16 @@
 
         },
         mounted () {
-            this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.stack'}]);
+            this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.network'}]);
             this.$store.commit('getNetworks');
         },
         methods: {
+            delete: function(){
+                console.log(this.dialog);
+            }
         },
         computed: {
-            ...mapState(['message', 'networks'])
+            ...mapState(['message', 'breadcrumbs', 'dialog', 'networks'])
         }
     }
 </script>
