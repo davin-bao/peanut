@@ -6,9 +6,11 @@ import menu from '../menu';
 Vue.use(Vuex);
 
 const NODES_PATH = '/nodes';
+const NODES_INSPECT_PATH = '/nodes/';
 const CONTAINERS_PATH = '/containers';
 const NETWORKS_PATH = '/networks';
 const NETWORKS_CREATE_PATH = '/networks/create';
+const NETWORKS_INSPECT_PATH = '/networks/';
 const NETWORKS_REMOVE_PATH = '/networks/';
 
 const store = new Vuex.Store({
@@ -18,6 +20,15 @@ const store = new Vuex.Store({
         breadcrumbs: [],
         endpoint: 'http://peanut.local',
         nodes: {loading: null, data: []},
+        node: {loading: null, data: {
+            Description: {
+                Resources: {},
+                Platform: {},
+                Engine: {}
+            },
+            Status: {},
+            ManagerStatus: {}
+        }},
         containers: {loading: null, data: []},
         networks: {loading: null, data: []},
         message: {
@@ -31,6 +42,22 @@ const store = new Vuex.Store({
         }
     },
     mutations: {
+        setBreadcrumbs (state, breadcrumbs) {
+            state.breadcrumbs = breadcrumbs;
+        },
+        setMenu (state, data) {
+            state.menu = data
+        },
+        setPageTitle (state, data) {
+            state.pageTitle = data
+        },
+        showMessage (state, message) {
+            state.message = {body: message.body, show: true, type: message.type};
+        },
+        showDeleteConfirm (state, action) {
+            state.deleteConfirm = { show: true, action: action};
+        },
+        //Node
         async getNodes (state) {
             state.nodes.loading = true;
             state.nodes.data = [];
@@ -41,6 +68,7 @@ const store = new Vuex.Store({
                 });
                 if(response.status !== 200){
                     state.message = {body: 'get endpoint error [' + response.statusText + ']', show: true, type: 'error'};
+                    return;
                 }
 
                 state.nodes.data = response.data;
@@ -48,6 +76,25 @@ const store = new Vuex.Store({
                 state.nodes.loading = false;
             }catch(e){
                 state.message = {body: 'get nodes error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async getNode(state, ID) {
+            state.node.loading = true;
+            try{
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + NODES_INSPECT_PATH + ID
+                });
+                if(response.status !== 200){
+                    state.message = {body: 'get node error [' + response.statusText + ']', show: true, type: 'error'};
+                    return;
+                }
+
+                state.node.data = response.data;
+
+                state.node.loading = false;
+            }catch(e){
+                state.message = {body: 'get node error [' + e.message + ']', show: true, type: 'error'};
             }
         },
         async getContainers (state){
@@ -71,6 +118,7 @@ const store = new Vuex.Store({
             }
             state.containers.loading = false;
         },
+        //Network
         async getNetworks (state){
             state.networks.loading = true;
             state.networks.data = [];
@@ -112,21 +160,6 @@ const store = new Vuex.Store({
             }
 
             await this.commit('getNetworks');
-        },
-        setBreadcrumbs (state, breadcrumbs) {
-            state.breadcrumbs = breadcrumbs;
-        },
-        setMenu (state, data) {
-            state.menu = data
-        },
-        setPageTitle (state, data) {
-            state.pageTitle = data
-        },
-        showMessage (state, message) {
-            state.message = {body: message.body, show: true, type: message.type};
-        },
-        showDeleteConfirm (state, action) {
-            state.deleteConfirm = { show: true, action: action};
         }
     },
     actions: {

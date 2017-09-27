@@ -28,6 +28,11 @@ class NodeController extends Controller
         return $this->response($result);
     }
 
+    public function getDetail($Id){
+        $item = Node::get($Id);
+        return $this->response($item);
+    }
+
     public function postUpdate($id, Request $request){
         $availability = $request->get('availability', null);
         $name = $request->get('name', null);

@@ -4,7 +4,7 @@ namespace App\Model;
 class Node extends DockerApiModel {
 
     public static function get($id){
-        $item = parent::HttpGet('nodes/' + $id);
+        $item = parent::HttpGet('nodes/' . $id);
 
         return new Node([
             'ID' => $item->ID,

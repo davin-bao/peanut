@@ -28,7 +28,7 @@
                             <v-divider></v-divider>
                             <p></p>
                             <p class="caption">Address: {{ item.Status.Addr }}</p>
-                            <p class="caption">ManagerAddress: {{ item.ManagerStatus.Addr }}</p>
+                            <p class="caption">Manager address: {{ item.ManagerStatus.Addr }}</p>
                             <p class="caption">Role: {{ item.Role }}</p>
                             <p class="caption">Availability: {{ item.Availability }}</p>
                             <p class="caption">Reachability: {{ item.ManagerStatus.Reachability }}</p>
