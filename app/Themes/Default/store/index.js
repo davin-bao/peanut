@@ -8,13 +8,15 @@ Vue.use(Vuex);
 const NODES_PATH = '/nodes';
 const CONTAINERS_PATH = '/containers';
 const NETWORKS_PATH = '/networks';
+const NETWORKS_CREATE_PATH = '/networks/create';
+const NETWORKS_REMOVE_PATH = '/networks/';
 
 const store = new Vuex.Store({
     state: {
         pageTitle: 'Home',
         menu: menu,
         breadcrumbs: [],
-        endpoint: 'http://localhost:8000',
+        endpoint: 'http://peanut.local',
         nodes: {loading: null, data: []},
         containers: {loading: null, data: []},
         networks: {loading: null, data: []},
@@ -79,10 +81,37 @@ const store = new Vuex.Store({
             });
             if(response.status !== 200){
                 state.message = {body: 'get containers error [' + response.statusText + ']', show: true, type: 'error'};
+                return;
             }
             state.networks.data = response.data;
 
             state.networks.loading = false;
+        },
+        async createNetwork(state, newItem){
+            var response = await axios({
+                method: 'post',
+                url: state.endpoint + NETWORKS_CREATE_PATH,
+                data: newItem
+            });
+            if(response.status !== 200){
+                state.message = {body: 'create network error [' + response.statusText + ']', show: true, type: 'error'};
+                return;
+            }
+            state.message = {body: 'create network success', show: true, type: 'success'};
+            await this.commit('getNetworks');
+        },
+        async removeNetwork(state, items){
+            for(let i=0; i< items.length; i++){
+                var response = await axios({
+                    method: 'delete',
+                    url: state.endpoint + NETWORKS_REMOVE_PATH + items[i].Id
+                });
+                if(response.status !== 200){
+                    state.message = {body: 'create network error [' + response.statusText + ']', show: true, type: 'error'};
+                }
+            }
+
+            await this.commit('getNetworks');
         },
         setBreadcrumbs (state, breadcrumbs) {
             state.breadcrumbs = breadcrumbs;

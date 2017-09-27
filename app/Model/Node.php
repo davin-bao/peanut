@@ -3,8 +3,8 @@ namespace App\Model;
 
 class Node extends DockerApiModel {
 
-    public function get($id){
-        $item = $this->HttpGet('nodes/' + $id);
+    public static function get($id){
+        $item = parent::HttpGet('nodes/' + $id);
 
         return new Node([
             'ID' => $item->ID,
@@ -23,7 +23,7 @@ class Node extends DockerApiModel {
 
     public static function find(){
         $result = [];
-        $list = Node::HttpGet('nodes');
+        $list = parent::HttpGet('nodes');
 
         foreach($list as $item){
             array_push($result, new Node([
@@ -55,6 +55,6 @@ class Node extends DockerApiModel {
             'Labels' => (object)$this->Labels,
         ];
 
-        return Node::HttpPost('nodes/' . $this->ID . '/update?version=' . $this->Version, $attributes);
+        return parent::HttpPost('nodes/' . $this->ID . '/update?version=' . $this->Version, $attributes);
     }
 }

@@ -6,9 +6,14 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    //
 
-    public function response($content){
-        return response()->json($content, 200)->header('Access-Control-Allow-Origin', '*');
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('enable_cross_request');
+    }
+
+    public function response($content=[]){
+        return response()->json($content, 200);
     }
 }

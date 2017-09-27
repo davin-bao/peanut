@@ -67,13 +67,7 @@
                     <v-spacer></v-spacer>
                 </v-system-bar>
                 <div>
-                    <v-alert v-bind='message' v-model='message.show' v-if="message.type=='success'" success dismissible transition="slide-y-transition">
-                        {{message.body}}
-                    </v-alert>
-                    <v-alert v-bind='message' v-model='message.show' v-if="message.type=='error'" error dismissible transition="slide-y-transition">
-                        {{message.body}}
-                    </v-alert>
-                    <v-alert v-bind='message' v-model='message.show' v-if="message.type=='info'" info dismissible transition="slide-y-transition">
+                    <v-alert v-bind='message' v-model='message.show' :success="message.type==='success'" :error="message.type==='error'" :info="message.type==='info'" dismissible transition="slide-y-transition">
                         {{message.body}}
                     </v-alert>
                     <v-dialog v-bind='deleteConfirm' v-model='deleteConfirm.show'  v-if="deleteConfirm.show" lazy absolute>
@@ -115,7 +109,7 @@
                     to = 'zh-CN';
                 }
                 this.$i18n.locale = to;
-                this.$store.commit('showMessage', {type: 'success', body: to});
+                this.$store.commit('showMessage', {type: 'info', body: to});
             },
             deleteConfirmOk () {
                 this.deleteConfirm.show = false;

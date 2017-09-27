@@ -47,7 +47,6 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         }
     }
 
-
     protected static function HttpPost($path, $params, $uri = null){
         $url = static::getUri($uri) . $path;
         $params_str = json_encode($params);
@@ -56,8 +55,7 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
-        curl_setopt($ch, CURLOPT_HTTPHEADER,
-            array("Content-type: application/json"));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params_str);
 
@@ -67,7 +65,30 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
 
         $body = json_decode($body);
 
-        if($httpCode !== 200) {
+        if($httpCode > 299) {
+            throw new HttpException($httpCode, $body->message);
+        } else {
+            return $body;
+        }
+    }
+
+    protected static function HttpDelete($path, $uri = null){
+        $url = static::getUri($uri) . $path;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+
+        $body = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $body = json_decode($body);
+
+        if($httpCode > 299) {
             throw new HttpException($httpCode, $body->message);
         } else {
             return $body;
