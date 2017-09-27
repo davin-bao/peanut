@@ -23,7 +23,6 @@ class NodeController extends Controller
         foreach($list as $item){
             array_push($result, $item->toArray());
         }
-        sleep(3);
 
         return $this->response($result);
     }

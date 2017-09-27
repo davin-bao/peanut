@@ -13,7 +13,8 @@ const routers = [
         route('/', 'Home', 'home'),
         route('/node/:id', 'NodeDetail', 'node_detail'),
         route('/stack', 'Stack', 'stack'),
-        route('/network', 'Network', 'network')
+        route('/network', 'Network', 'network'),
+        route('/compose', 'Compose', 'compose')
     ])
 ];
 export default routers;

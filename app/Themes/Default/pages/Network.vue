@@ -5,6 +5,9 @@
             height: auto!important;
         }
     }
+    .create-dialog-save-btn {
+        bottom: 14px!important;
+    }
 </style>
 <template>
     <div>
@@ -192,7 +195,7 @@
                                     </v-flex>
                                 </v-layout>
                             </v-flex>
-                            <v-flex d-flex xs12 sm9 md10>
+                            <v-flex d-flex xs12 sm12 md12>
                                 <v-layout row wrap>
                                     <template  v-for="(item, index) in newItem.Labels">
                                         <v-flex d-flex xs3>
@@ -216,10 +219,12 @@
                                 </v-layout>
                             </v-flex>
                             <v-flex xs12 offset-xs0 offset-sm2>
+                                &nbsp;
                                 <v-btn @click="createAction()" primary
                                        absolute
                                        bottom
                                        right
+                                       class="create-dialog-save-btn"
                                 >SAVE</v-btn>
                             </v-flex>
                         </v-layout>

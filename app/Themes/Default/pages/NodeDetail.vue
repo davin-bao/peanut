@@ -9,7 +9,7 @@
             <v-flex d-flex xs12 sm12 md12 v-bind='node' v-if="node.loading===true">
                 <div><v-progress-circular indeterminate v-bind:size="70" v-bind:width="7"></v-progress-circular></div>
             </v-flex>
-            <template v-if="node.data">
+            <template v-if="node.loading===false">
                 <v-flex d-flex xs12 sm12 md12>
                     <v-divider></v-divider>
                 </v-flex>
@@ -63,7 +63,7 @@
                 <v-flex d-flex xs12 sm6 md4>
                     <v-card flat>
                         <v-card-title class="title">Labels</v-card-title>
-                        <v-card-text v-for="(value, index) in node.Labels">
+                        <v-card-text v-for="(value, index) in node.Labels" :key="value">
                             <p class="caption">{{ index }}: {{ value }}</p>
                         </v-card-text>
                     </v-card>

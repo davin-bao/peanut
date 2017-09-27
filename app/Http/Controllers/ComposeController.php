@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Network;
+use App\Model\Compose;
 use Illuminate\Http\Request;
 
-class NetworkController extends Controller
+class ComposeController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -19,7 +19,7 @@ class NetworkController extends Controller
 
     public function getList(){
         $result = [];
-        $list = Network::find();
+        $list = Compose::find();
         foreach($list as $item){
             array_push($result, $item->toArray());
         }
@@ -28,13 +28,13 @@ class NetworkController extends Controller
     }
 
     public function postCreate(Request $request){
-        Network::create($request);
+        Compose::create($request);
 
         return $this->response();
     }
 
-    public function postRemove($Id){
-        $item = Network::get($Id);
+    public function postRemove($Name){
+        $item = Compose::get($Name);
         $item->remove();
 
         return $this->response();

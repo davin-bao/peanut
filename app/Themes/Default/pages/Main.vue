@@ -98,7 +98,7 @@
         data () {
             return {
                 drawer: true,
-                dark: false,
+                dark: true,
                 mini: false,
                 locales: ['en-US', 'zh-CN']
             }

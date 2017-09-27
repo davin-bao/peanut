@@ -17,5 +17,8 @@ $router->get('nodes/{Id}', ['as' => 'node_inspect', 'uses' => 'NodeController@ge
 $router->get('networks', ['as' => 'network_list', 'uses' => 'NetworkController@getList']);
 $router->post('networks/create', ['as' => 'network_create', 'uses' => 'NetworkController@postCreate']);
 $router->delete('networks/{Id}', ['as' => 'network_remove', 'uses' => 'NetworkController@postRemove']);
+$router->get('composes', ['as' => 'compose_list', 'uses' => 'ComposeController@getList']);
+$router->post('composes/create', ['as' => 'compose_create', 'uses' => 'ComposeController@postCreate']);
+$router->delete('composes/{Name}', ['as' => 'compose_remove', 'uses' => 'ComposeController@postRemove']);
 
 $router->get('/', ['as' => 'index', 'uses' => 'IndexController@getIndex']);

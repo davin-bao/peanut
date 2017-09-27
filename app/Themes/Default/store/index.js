@@ -12,25 +12,22 @@ const NETWORKS_PATH = '/networks';
 const NETWORKS_CREATE_PATH = '/networks/create';
 const NETWORKS_INSPECT_PATH = '/networks/';
 const NETWORKS_REMOVE_PATH = '/networks/';
+const COMPOSES_PATH = '/composes';
+const COMPOSES_CREATE_PATH = '/composes/create';
+const COMPOSES_INSPECT_PATH = '/composes/';
+const COMPOSES_REMOVE_PATH = '/composes/';
 
 const store = new Vuex.Store({
     state: {
         pageTitle: 'Home',
         menu: menu,
         breadcrumbs: [],
-        endpoint: 'http://peanut.local',
+        endpoint: 'http://localhost:8000',
         nodes: {loading: null, data: []},
-        node: {loading: null, data: {
-            Description: {
-                Resources: {},
-                Platform: {},
-                Engine: {}
-            },
-            Status: {},
-            ManagerStatus: {}
-        }},
+        node: {loading: null, data: {}},
         containers: {loading: null, data: []},
         networks: {loading: null, data: []},
+        composes: {loading: null, data: []},
         message: {
             show: false,
             body: null,
@@ -160,6 +157,49 @@ const store = new Vuex.Store({
             }
 
             await this.commit('getNetworks');
+        },
+        //Compose
+        async getComposes (state){
+            state.composes.loading = true;
+            state.composes.data = [];
+
+            var response = await axios({
+                method: 'get',
+                url: state.endpoint + COMPOSES_PATH
+            });
+            if(response.status !== 200){
+                state.message = {body: 'get containers error [' + response.statusText + ']', show: true, type: 'error'};
+                return;
+            }
+            state.composes.data = response.data;
+
+            state.composes.loading = false;
+        },
+        async createCompose(state, newItem){
+            var response = await axios({
+                method: 'post',
+                url: state.endpoint + COMPOSES_CREATE_PATH,
+                data: newItem
+            });
+            if(response.status !== 200){
+                state.message = {body: 'create compose error [' + response.statusText + ']', show: true, type: 'error'};
+                return;
+            }
+            state.message = {body: 'create compose success', show: true, type: 'success'};
+            await this.commit('getComposes');
+        },
+        async removeCompose(state, items){
+            for(let i=0; i< items.length; i++){
+                var response = await axios({
+                    method: 'delete',
+                    url: state.endpoint + COMPOSES_REMOVE_PATH + items[i].Name
+                });
+                if(response.status !== 200){
+                    state.message = {body: 'create compose error [' + response.statusText + ']', show: true, type: 'error'};
+                }
+            }
+
+            await this.commit('getComposes');
         }
     },
     actions: {
