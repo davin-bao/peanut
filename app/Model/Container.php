@@ -10,13 +10,13 @@ class Container extends DockerApiModel {
 
         foreach($list as $item){
             array_push($result, new Container([
-                'ID' => $item->Id,
+                'ID' => array_get($item, 'Id'),
                 'Node' => $endpoint,
-                'Names' => $item->Names,
-                'Image' => $item->Image,
-                'Networks' => $item->NetworkSettings->Networks,
-                'State' => $item->State,
-                'Ports' => $item->Ports
+                'Names' => array_get($item, 'Names'),
+                'Image' => array_get($item, 'Image'),
+                'Networks' => array_get($item, 'NetworkSettings.Networks'),
+                'State' => array_get($item, 'State'),
+                'Ports' => array_get($item, 'Ports'),
             ]));
         }
         return $result;

@@ -7,17 +7,17 @@ class Node extends DockerApiModel {
         $item = parent::HttpGet('nodes/' . $id);
 
         return new Node([
-            'ID' => $item->ID,
-            'Version' => $item->Version->Index,
-            'CreatedAt' => $item->CreatedAt,
-            'UpdatedAt' => $item->UpdatedAt,
-            'Name' => isset($item->Spec->Name) ? $item->Spec->Name : '',
-            'Availability' => $item->Spec->Availability,
-            'Labels' => $item->Spec->Labels,
-            'Role' => $item->Spec->Role,
-            'Description'=> $item->Description,
-            'Status' => $item->Status,
-            'ManagerStatus' => isset($item->ManagerStatus) ? $item->ManagerStatus : '',
+            'ID' => array_get($item, 'ID'),
+            'Version' => array_get($item, 'Version.Index'),
+            'CreatedAt' => array_get($item, 'CreatedAt'),
+            'UpdatedAt' => array_get($item, 'UpdatedAt'),
+            'Name' => array_get($item, 'Spec.Name', ''),
+            'Availability' => array_get($item, 'Spec.Availability'),
+            'Labels' => array_get($item, 'Spec.Labels'),
+            'Role' => array_get($item, 'Spec.Role'),
+            'Description'=> array_get($item, 'Description'),
+            'Status' => array_get($item, 'Status'),
+            'ManagerStatus' => array_get($item, 'ManagerStatus'),
         ]);
     }
 
@@ -27,17 +27,17 @@ class Node extends DockerApiModel {
 
         foreach($list as $item){
             array_push($result, new Node([
-                'ID' => $item->ID,
-                'Version' => $item->Version->Index,
-                'CreatedAt' => $item->CreatedAt,
-                'UpdatedAt' => $item->UpdatedAt,
-                'Name' => isset($item->Spec->Name) ? $item->Spec->Name : '',
-                'Availability' => $item->Spec->Availability,
-                'Labels' => $item->Spec->Labels,
-                'Role' => $item->Spec->Role,
-                'Description'=> $item->Description,
-                'Status' => $item->Status,
-                'ManagerStatus' => isset($item->ManagerStatus) ? $item->ManagerStatus : '',
+                'ID' => array_get($item, 'ID'),
+                'Version' => array_get($item, 'Version.Index'),
+                'CreatedAt' => array_get($item, 'CreatedAt'),
+                'UpdatedAt' => array_get($item, 'UpdatedAt'),
+                'Name' => array_get($item, 'Spec.Name', ''),
+                'Availability' => array_get($item, 'Spec.Availability'),
+                'Labels' => array_get($item, 'Spec.Labels'),
+                'Role' => array_get($item, 'Spec.Role'),
+                'Description'=> array_get($item, 'Description'),
+                'Status' => array_get($item, 'Status'),
+                'ManagerStatus' => array_get($item, 'ManagerStatus'),
             ]));
         }
         return $result;

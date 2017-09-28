@@ -70,33 +70,34 @@
         </v-card>
         <v-layout row justify-center>
             <v-dialog v-model="newItem.show" v-if="newItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
-                <v-btn primary dark slot="activator">{{ $t('nouns.compose_create') }}</v-btn>
+                <v-btn primary slot="activator">{{ $t('nouns.compose_create') }}</v-btn>
                 <v-card>
-                    <v-toolbar dark class="primary">
-                        <v-btn icon @click.native="newItem.show = false" dark>
+                    <v-form v-model="newItem.valid" ref="createForm">
+                    <v-toolbar class="primary">
+                        <v-btn icon @click.native="newItem.show = false">
                             <v-icon>close</v-icon>
                         </v-btn>
                         <v-toolbar-title>{{ $t('nouns.compose_create') }}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                            <v-btn dark flat @click.native="createAction()">{{ $t('nouns.save') }}</v-btn>
+                            <v-btn flat @click.native="submitCreateFrom">{{ $t('nouns.save') }}</v-btn>
                         </v-toolbar-items>
                     </v-toolbar>
-                    <v-form v-model="valid" ref="createForm">
                         <v-text-field
                                 label="Name"
                                 v-model="newItem.Name"
-                                :rules="newItem.nameRules"
+                                :rules="[(v) => !!v || $t('validate.required')]"
                                 required
                         ></v-text-field>
                         <v-text-field
                                 label="Content"
                                 v-model="newItem.Content"
-                                :rules="newItem.contentRules"
+                                :rules="[(v) => !!v || $t('validate.required')]"
                                 required
-                                textarea
+                                multi-line
+                                rows="20"
                         ></v-text-field>
-                        <v-btn @click="createAction()" :class="{ green: newItem.valid, red: !newItem.valid }">Save</v-btn>
+                        <v-btn @click="submitCreateFrom" :class="{ green: newItem.valid, red: !newItem.valid }">Save</v-btn>
                         <v-btn @click="clearCreateFrom">clear</v-btn>
                     </v-form>
                 </v-card>
@@ -123,15 +124,7 @@
                 newItem: {
                     show: false,
                     Name: '',
-                    nameRules: [
-                        (v) => !!v || 'Name is required',
-                        (v) => v && v.length <= 4 || $t('validate.required')
-                    ],
                     Content: '',
-                    contentRules: [
-                            (v) => !!v || 'Name is required',
-                                (v) => v && v.length <= 4 || $t('validate.required')
-                    ],
                     valid: false
                 }
             }
@@ -158,12 +151,14 @@
             showAddDialog() {
                 this.newItem.show = true;
             },
+            submitCreateFrom () {
+                if (this.$refs.createForm.validate()) {
+                    this.$store.commit('createCompose', this.newItem);
+                    this.newItem.show = false;
+                }
+            },
             clearCreateFrom () {
                 this.$refs.createForm.reset()
-            }
-            createAction() {
-                this.$store.commit('createCompose', this.newItem);
-                this.newItem.show = false;
             },
             removeAction(item) {
                 var self = this;

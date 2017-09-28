@@ -13,6 +13,8 @@ const routers = [
         route('/', 'Home', 'home'),
         route('/node/:id', 'NodeDetail', 'node_detail'),
         route('/stack', 'Stack', 'stack'),
+        route('/service', 'Service', 'service'),
+        route('/service/:Stack', 'Service', 'service_stack'),
         route('/network', 'Network', 'network'),
         route('/compose', 'Compose', 'compose')
     ])

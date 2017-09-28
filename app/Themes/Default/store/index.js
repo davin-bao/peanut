@@ -8,6 +8,14 @@ Vue.use(Vuex);
 const NODES_PATH = '/nodes';
 const NODES_INSPECT_PATH = '/nodes/';
 const CONTAINERS_PATH = '/containers';
+const STACKS_PATH = '/stacks';
+const STACKS_CREATE_PATH = '/stacks/create';
+const STACKS_INSPECT_PATH = '/stacks/';
+const STACKS_REMOVE_PATH = '/stacks/';
+const SERVICES_PATH = '/services';
+const SERVICES_CREATE_PATH = '/services/create';
+const SERVICES_INSPECT_PATH = '/services/';
+const SERVICES_REMOVE_PATH = '/services/';
 const NETWORKS_PATH = '/networks';
 const NETWORKS_CREATE_PATH = '/networks/create';
 const NETWORKS_INSPECT_PATH = '/networks/';
@@ -22,9 +30,11 @@ const store = new Vuex.Store({
         pageTitle: 'Home',
         menu: menu,
         breadcrumbs: [],
-        endpoint: 'http://localhost:8000',
+        endpoint: 'http://peanut.local',
         nodes: {loading: null, data: []},
         node: {loading: null, data: {}},
+        stacks: {loading: null, data: []},
+        services: {loading: null, data: []},
         containers: {loading: null, data: []},
         networks: {loading: null, data: []},
         composes: {loading: null, data: []},
@@ -63,8 +73,8 @@ const store = new Vuex.Store({
                     method: 'get',
                     url: state.endpoint + NODES_PATH
                 });
-                if(response.status !== 200){
-                    state.message = {body: 'get endpoint error [' + response.statusText + ']', show: true, type: 'error'};
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -82,8 +92,8 @@ const store = new Vuex.Store({
                     method: 'get',
                     url: state.endpoint + NODES_INSPECT_PATH + ID
                 });
-                if(response.status !== 200){
-                    state.message = {body: 'get node error [' + response.statusText + ']', show: true, type: 'error'};
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -102,57 +112,200 @@ const store = new Vuex.Store({
                 var nodeId = state.nodes.data[i].ID;
                 var address = state.nodes.data[i].ManagerStatus.Addr;
                 var endpoint = address.substring(0, address.indexOf(':')).split('.').join('-');
-                var response = await axios({
-                    method: 'get',
-                    url: state.endpoint + CONTAINERS_PATH + '/' + endpoint
-                });
-                if(response.status !== 200){
-                    state.message = {body: 'get containers error [' + response.statusText + ']', show: true, type: 'error'};
+                try{
+                    var response = await axios({
+                        method: 'get',
+                        url: state.endpoint + CONTAINERS_PATH + '/' + endpoint
+                    });
+                    if(response.status == 299){
+                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        return;
+                    }
+
+                    state.containers.data[nodeId] = response.data;
+                    state.nodes.data[i].containers = response.data;
+                }catch(e){
+                    state.message = {body: 'get containers error [' + e.message + ']', show: true, type: 'error'};
                 }
-                state.containers.data[nodeId] = response.data;
-                state.nodes.data[i].containers = response.data;
-                console.log(nodeId, state.nodes.data[i].containers);
             }
             state.containers.loading = false;
+        },
+        //Stack
+        async getStacks (state){
+            state.stacks.loading = true;
+            state.stacks.data = [];
+
+            try{
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + STACKS_PATH
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+
+                state.stacks.data = response.data;
+                state.stacks.loading = false;
+            }catch(e){
+                state.message = {body: 'get stacks error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async createStack(state, newItem){
+            try{
+                var response = await axios({
+                    method: 'post',
+                    url: state.endpoint + STACKS_CREATE_PATH,
+                    data: newItem
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+
+                state.message = {body: 'create stack success', show: true, type: 'success'};
+                await this.commit('getStacks');
+            }catch(e){
+                state.message = {body: 'create stack error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async removeStack(state, items){
+            for(let i=0; i< items.length; i++){
+                try{
+                    var response = await axios({
+                        method: 'delete',
+                        url: state.endpoint + STACKS_REMOVE_PATH + items[i].Id
+                    });
+                    if(response.status == 299){
+                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        return;
+                    }
+
+                }catch(e){
+                    state.message = {body: 'remove stack error [' + e.message + ']', show: true, type: 'error'};
+                }
+            }
+
+            await this.commit('getStacks');
+        },
+        //Service
+        async getServices (state, Stack){
+            state.services.loading = true;
+            state.services.data = [];
+
+            try{
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + SERVICES_PATH
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+                if(typeof(Stack) == 'undefined'){
+                    state.services.data = response.data;
+                }else{
+                    for(var i=0; i<response.data.length; i++){
+                        if(response.data[i].Stack === Stack){
+                            state.services.data.push(response.data[i]);
+                        }
+                    }
+                }
+                state.services.loading = false;
+            }catch(e){
+                state.message = {body: 'get services error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async createService(state, newItem){
+            try{
+                var response = await axios({
+                    method: 'post',
+                    url: state.endpoint + SERVICES_CREATE_PATH,
+                    data: newItem
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+
+                state.message = {body: 'create service success', show: true, type: 'success'};
+                await this.commit('getServices');
+            }catch(e){
+                state.message = {body: 'create service error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async removeService(state, items){
+            for(let i=0; i< items.length; i++){
+                try{
+                    var response = await axios({
+                        method: 'delete',
+                        url: state.endpoint + SERVICES_REMOVE_PATH + items[i].Id
+                    });
+                    if(response.status == 299){
+                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        return;
+                    }
+
+                }catch(e){
+                    state.message = {body: 'remove service error [' + e.message + ']', show: true, type: 'error'};
+                }
+            }
+
+            await this.commit('getServices');
         },
         //Network
         async getNetworks (state){
             state.networks.loading = true;
             state.networks.data = [];
 
-            var response = await axios({
-                method: 'get',
-                url: state.endpoint + NETWORKS_PATH
-            });
-            if(response.status !== 200){
-                state.message = {body: 'get containers error [' + response.statusText + ']', show: true, type: 'error'};
-                return;
-            }
-            state.networks.data = response.data;
+            try{
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + NETWORKS_PATH
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
 
-            state.networks.loading = false;
+                state.networks.data = response.data;
+                state.networks.loading = false;
+            }catch(e){
+                state.message = {body: 'get networks error [' + e.message + ']', show: true, type: 'error'};
+            }
         },
         async createNetwork(state, newItem){
-            var response = await axios({
-                method: 'post',
-                url: state.endpoint + NETWORKS_CREATE_PATH,
-                data: newItem
-            });
-            if(response.status !== 200){
-                state.message = {body: 'create network error [' + response.statusText + ']', show: true, type: 'error'};
-                return;
+            try{
+                var response = await axios({
+                    method: 'post',
+                    url: state.endpoint + NETWORKS_CREATE_PATH,
+                    data: newItem
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+
+                state.message = {body: 'create network success', show: true, type: 'success'};
+                await this.commit('getNetworks');
+            }catch(e){
+                state.message = {body: 'create network error [' + e.message + ']', show: true, type: 'error'};
             }
-            state.message = {body: 'create network success', show: true, type: 'success'};
-            await this.commit('getNetworks');
         },
         async removeNetwork(state, items){
             for(let i=0; i< items.length; i++){
-                var response = await axios({
-                    method: 'delete',
-                    url: state.endpoint + NETWORKS_REMOVE_PATH + items[i].Id
-                });
-                if(response.status !== 200){
-                    state.message = {body: 'create network error [' + response.statusText + ']', show: true, type: 'error'};
+                try{
+                    var response = await axios({
+                        method: 'delete',
+                        url: state.endpoint + NETWORKS_REMOVE_PATH + items[i].Id
+                    });
+                    if(response.status == 299){
+                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        return;
+                    }
+
+                }catch(e){
+                    state.message = {body: 'remove network error [' + e.message + ']', show: true, type: 'error'};
                 }
             }
 
@@ -162,40 +315,54 @@ const store = new Vuex.Store({
         async getComposes (state){
             state.composes.loading = true;
             state.composes.data = [];
+            try{
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + COMPOSES_PATH
+                });
 
-            var response = await axios({
-                method: 'get',
-                url: state.endpoint + COMPOSES_PATH
-            });
-            if(response.status !== 200){
-                state.message = {body: 'get containers error [' + response.statusText + ']', show: true, type: 'error'};
-                return;
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+                state.composes.data = response.data;
+
+                state.composes.loading = false;
+            }catch(e){
+                state.message = {body: 'get composes error [' + e.message + ']', show: true, type: 'error'};
             }
-            state.composes.data = response.data;
-
-            state.composes.loading = false;
         },
         async createCompose(state, newItem){
-            var response = await axios({
-                method: 'post',
-                url: state.endpoint + COMPOSES_CREATE_PATH,
-                data: newItem
-            });
-            if(response.status !== 200){
-                state.message = {body: 'create compose error [' + response.statusText + ']', show: true, type: 'error'};
-                return;
+            try{
+                var response = await axios({
+                    headers: {'Content-Type': 'application/json; charset=UTF-8', 'Accept': 'application/json'},
+                    method: 'post',
+                    url: state.endpoint + COMPOSES_CREATE_PATH,
+                    data: newItem
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+                state.message = {body: 'create compose success', show: true, type: 'success'};
+                await this.commit('getComposes');
+            }catch(e){
+                state.message = {body: 'create compose error [' + e.message + ']', show: true, type: 'error'};
             }
-            state.message = {body: 'create compose success', show: true, type: 'success'};
-            await this.commit('getComposes');
         },
         async removeCompose(state, items){
-            for(let i=0; i< items.length; i++){
-                var response = await axios({
-                    method: 'delete',
-                    url: state.endpoint + COMPOSES_REMOVE_PATH + items[i].Name
-                });
-                if(response.status !== 200){
-                    state.message = {body: 'create compose error [' + response.statusText + ']', show: true, type: 'error'};
+            for (let i = 0; i < items.length; i++) {
+                try {
+                    var response = await axios({
+                        method: 'delete',
+                        url: state.endpoint + COMPOSES_REMOVE_PATH + items[i].Name
+                    });
+                    if(response.status == 299){
+                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        return;
+                    }
+                }catch(e){
+                    state.message = {body: 'remove composes error [' + e.message + ']', show: true, type: 'error'};
                 }
             }
 

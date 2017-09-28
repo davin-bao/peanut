@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Network;
+use App\Model\Stack;
 use Illuminate\Http\Request;
 
-class NetworkController extends Controller
+class StackController extends Controller
 {
 
     public function getList(){
         $result = [];
-        $list = Network::find();
+        $list = Stack::find();
         foreach($list as $item){
             array_push($result, $item->toArray());
         }
@@ -18,14 +18,19 @@ class NetworkController extends Controller
         return $this->response($result);
     }
 
+    public function getDetail($Id){
+        $item = Stack::get($Id);
+        return $this->response($item);
+    }
+
     public function postCreate(Request $request){
-        Network::create($request);
+        Stack::create($request);
 
         return $this->response();
     }
 
     public function postRemove($Id){
-        $item = Network::get($Id);
+        $item = Stack::get($Id);
         $item->remove();
 
         return $this->response();

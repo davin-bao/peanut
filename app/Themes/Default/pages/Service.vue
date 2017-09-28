@@ -1,9 +1,9 @@
 <style lang="less">
     .content-toolbar {
         background-color: rgba(0,0,0,0)!important;
-    .toolbar__content {
-        height: auto!important;
-    }
+        .toolbar__content {
+            height: auto!important;
+        }
     }
     .create-dialog-save-btn {
         bottom: 14px!important;
@@ -29,11 +29,11 @@
             </v-card-title>
             <v-data-table
                     v-bind:headers="headers"
-                    v-bind:items="stacks.data"
+                    v-bind:items="services.data"
                     v-bind:search="search"
                     v-bind:pagination.sync="pagination"
                     :total-items="totalItems"
-                    :loading="stacks.loading"
+                    :loading="services.loading"
                     :rows-per-page-items="pageCount"
                     v-model="selected"
                     select-all
@@ -52,13 +52,12 @@
                     ></v-checkbox>
                     <td>{{ props.item.Name }}</td>
                     <td>{{ props.item.Image }}</td>
-                    <td>{{ props.item.Count }}</td>
+                    <td>{{ props.item.SchedulingMode }}</td>
+                    <td>{{ props.item.PublishedPorts }}</td>
+                    <td>{{ props.item.Stack }}</td>
                     <td>{{ props.item.UpdatedAt }}</td>
                     <td  class="text-xs-right">
                         <v-btn-toggle small>
-                            <v-btn flat :to="'/service/'+props.item.Name">
-                                <v-icon>list</v-icon>
-                            </v-btn>
                             <v-btn flat primary>
                                 <v-icon>visibility</v-icon>
                             </v-btn>
@@ -72,13 +71,13 @@
         </v-card>
         <v-layout row justify-center>
             <v-dialog v-model="newItem.show" v-if="newItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
-                <v-btn primary dark slot="activator">{{ $t('nouns.stack_create') }}</v-btn>
+                <v-btn primary dark slot="activator">{{ $t('nouns.service_create') }}</v-btn>
                 <v-card>
                     <v-toolbar dark class="primary">
                         <v-btn icon @click.native="newItem.show = false" dark>
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>{{ $t('nouns.stack_create') }}</v-toolbar-title>
+                        <v-toolbar-title>{{ $t('nouns.service_create') }}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn dark flat @click.native="createAction()">{{ $t('nouns.save') }}</v-btn>
@@ -128,7 +127,7 @@
                                 <v-switch primary label="EnableIPv6" v-model="newItem.EnableIPv6"></v-switch>
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md12>
-                                <v-subheader>Stack configuration</v-subheader>
+                                <v-subheader>Service configuration</v-subheader>
                             </v-flex>
                             <v-flex d-flex xs12 sm3 md2>
                                 <v-subheader>Subnet</v-subheader>
@@ -262,10 +261,22 @@
                         value: 'Image'
                     },
                     {
-                        text: 'Service Count',
+                        text: 'Scheduling mode',
                         align: 'left',
                         sortable: false,
-                        value: 'Count'
+                        value: 'SchedulingMode'
+                    },
+                    {
+                        text: 'Published Ports',
+                        align: 'left',
+                        sortable: false,
+                        value: 'PublishedPorts'
+                    },
+                    {
+                        text: 'Stack',
+                        align: 'left',
+                        sortable: true,
+                        value: 'Stack'
                     },
                     {
                         text: 'UpdatedAt',
@@ -296,7 +307,7 @@
 
         },
         mounted () {
-            this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.stack'}]);
+            this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.service'}]);
             this.refreshAll();
         },
         methods: {
@@ -304,28 +315,29 @@
                 var self = this;
                 if(self.selected.length == 0) return;
                 this.$store.commit('showDeleteConfirm', function(){
-                    self.$store.commit('removeStack', self.selected);
+                    self.$store.commit('removeService', self.selected);
                 });
             },
             refreshAll() {
-                this.$store.commit('getStacks');
+                this.$store.commit('getServices', this.$route.params.Stack);
             },
             showAddDialog() {
                 this.newItem.show = true;
             },
             createAction() {
-                this.$store.commit('createStack', this.newItem);
+                this.$store.commit('createService', this.newItem);
                 this.newItem.show = false;
             },
             removeAction(item) {
                 var self = this;
                 this.$store.commit('showDeleteConfirm', function(){
-                    self.$store.commit('removeStack', [item]);
+                    self.$store.commit('removeService', [item]);
                 });
             }
         },
         computed: {
-                ...mapState(['stacks'])
+            ...mapState(['services'])
         }
     }
 </script>
+

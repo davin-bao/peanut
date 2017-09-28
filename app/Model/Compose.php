@@ -1,7 +1,7 @@
 <?php
 namespace App\Model;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Exceptions\NoticeMessageException;
 
 class Compose extends DockerApiModel {
     const SAVE_PATH = 'compose';
@@ -10,7 +10,7 @@ class Compose extends DockerApiModel {
         $root = storage_path(static::SAVE_PATH);
         $fileName = $root . DIRECTORY_SEPARATOR . $Name . '.yml';
         if(!file_exists($fileName)){
-            throw new NotFoundHttpException('Can not find the compose data file');
+            throw new NoticeMessageException('Can not find the compose data file');
         }
         return new Compose([
             'Name' => $Name,
@@ -32,20 +32,21 @@ class Compose extends DockerApiModel {
                     ]));
             }
         }
+
         return $result;
     }
 
     public static function create($request){
         if(!$Name = $request->get('Name', null)){
-            throw new NotFoundHttpException('Name field is required');
+            throw new NoticeMessageException('Name field is required');
         }
         if(!$Content = $request->get('Content', null)){
-            throw new NotFoundHttpException('Content field is required');
+            throw new NoticeMessageException('Content field is required');
         }
         $root = storage_path(static::SAVE_PATH);
         $fileName = $root . DIRECTORY_SEPARATOR . $Name . '.yml';
         if(file_exists($fileName)){
-            throw new NotFoundHttpException('Compose data file is exist');
+            throw new NoticeMessageException('Compose data file is exist');
         }
 
         file_put_contents($fileName, $Content);

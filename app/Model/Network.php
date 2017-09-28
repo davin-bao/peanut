@@ -1,7 +1,7 @@
 <?php
 namespace App\Model;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Exceptions\NoticeMessageException;
 
 class Network extends DockerApiModel {
     const GET_PATH = 'networks/';
@@ -13,22 +13,22 @@ class Network extends DockerApiModel {
         $item = parent::HttpGet(static::GET_PATH . $Id);
 
         return new Network([
-            'Id' => $item->Id,
-            'Name' => $item->Name,
-            'Created' => $item->Created,
-            'Scope' => $item->Scope,
-            'Driver' => $item->Driver,
-            'EnableIPv6' => $item->EnableIPv6,
-            'IPAM' => $item->IPAM,
-            'Internal' => $item->Internal,
-            'Attachable' => $item->Attachable,
-            'Ingress' => $item->Ingress,
-            'ConfigFrom' => $item->ConfigFrom,
-            'ConfigOnly' => $item->ConfigOnly,
-            'Containers' => $item->Containers,
-            'Options' => $item->Options,
-            'Labels' => $item->Labels,
-            'Containers' => $item->Containers
+            'Id' => array_get($item, 'Id'),
+            'Name' => array_get($item, 'Name'),
+            'Created' => array_get($item, 'Created'),
+            'Scope' => array_get($item, 'Scope'),
+            'Driver' => array_get($item, 'Driver'),
+            'EnableIPv6' => array_get($item, 'EnableIPv6'),
+            'IPAM' => array_get($item, 'IPAM'),
+            'Internal' => array_get($item, 'Internal'),
+            'Attachable' => array_get($item, 'Attachable'),
+            'Ingress' => array_get($item, 'Ingress'),
+            'ConfigFrom' => array_get($item, 'ConfigFrom'),
+            'ConfigOnly' => array_get($item, 'ConfigOnly'),
+            'Containers' => array_get($item, 'Containers'),
+            'Options' => array_get($item, 'Options'),
+            'Labels' => array_get($item, 'Labels'),
+            'Containers' => array_get($item, 'Containers')
         ]);
     }
 
@@ -38,21 +38,22 @@ class Network extends DockerApiModel {
 
         foreach($list as $item){
             array_push($result, new Network([
-                'Id' => $item->Id,
-                'Name' => $item->Name,
-                'Created' => $item->Created,
-                'Scope' => $item->Scope,
-                'Driver' => $item->Driver,
-                'EnableIPv6' => $item->EnableIPv6,
-                'IPAM' => $item->IPAM,
-                'Internal' => $item->Internal,
-                'Attachable' => $item->Attachable,
-                'Ingress' => $item->Ingress,
-                'ConfigFrom' => $item->ConfigFrom,
-                'ConfigOnly' => $item->ConfigOnly,
-                'Containers' => $item->Containers,
-                'Options' => $item->Options,
-                'Labels' => $item->Labels
+                'Id' => array_get($item, 'Id'),
+                'Name' => array_get($item, 'Name'),
+                'Created' => array_get($item, 'Created'),
+                'Scope' => array_get($item, 'Scope'),
+                'Driver' => array_get($item, 'Driver'),
+                'EnableIPv6' => array_get($item, 'EnableIPv6'),
+                'IPAM' => array_get($item, 'IPAM'),
+                'Internal' => array_get($item, 'Internal'),
+                'Attachable' => array_get($item, 'Attachable'),
+                'Ingress' => array_get($item, 'Ingress'),
+                'ConfigFrom' => array_get($item, 'ConfigFrom'),
+                'ConfigOnly' => array_get($item, 'ConfigOnly'),
+                'Containers' => array_get($item, 'Containers'),
+                'Options' => array_get($item, 'Options'),
+                'Labels' => array_get($item, 'Labels'),
+                'Containers' => array_get($item, 'Containers')
             ]));
         }
         return $result;
@@ -60,7 +61,7 @@ class Network extends DockerApiModel {
 
     public static function create($request){
         if(!$request->get('Name', null)){
-            throw new NotFoundHttpException('Name field is required');
+            throw new NoticeMessageException('Name field is required');
         }
         $attributes = [
             'Name' => $request->get('Name'),

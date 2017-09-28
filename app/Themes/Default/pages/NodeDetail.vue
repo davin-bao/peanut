@@ -84,7 +84,6 @@
         mounted () {
             this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'nouns.node_detail'}]);
             this.$store.commit('getNode', this.$route.params.id);
-            console.log(this.node.loading);
         },
         methods: {
             removeAction(item) {

@@ -42,7 +42,7 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         if($httpCode !== 200) {
             throw new HttpException($httpCode);
         } else {
-            $body = json_decode($body);
+            $body = json_decode($body, true);
             return $body;
         }
     }

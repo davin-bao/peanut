@@ -7,15 +7,6 @@ use Illuminate\Http\Request;
 
 class ComposeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
 
     public function getList(){
         $result = [];
