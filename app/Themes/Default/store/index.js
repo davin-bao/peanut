@@ -98,11 +98,20 @@ const store = new Vuex.Store({
                 }
 
                 state.node.data = response.data;
+                await this.commit('getNodeStatus', state.node.data.ManagerStatus.Addr);
 
                 state.node.loading = false;
             }catch(e){
                 state.message = {body: 'get node error [' + e.message + ']', show: true, type: 'error'};
             }
+        },
+        async getNodeStatus(state, address){
+            var endpoint = address.substring(0, address.indexOf(':'));
+            var response = await axios({
+                method: 'get',
+                url: 'http://' + endpoint + ':8888/?command=status'
+            });
+            console.log(response);
         },
         async getContainers (state){
             state.containers.loading = true;

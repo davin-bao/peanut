@@ -50,17 +50,18 @@ class Stack extends DockerApiModel {
     }
 
     public static function create($request){
-        if(!$request->get('Name', null)){
+        if(!$Name = $request->get('Name', null)){
             throw new NoticeMessageException('Name field is required');
         }
         if(!$composeName = $request->get('ComposeFileName', null)){
             throw new NoticeMessageException('Compose File Name field is required');
         }
-
-        $compose = Compose::get($composeName);
-
-
-
+        $composeFile = env('COMPOSE_FILE_PATH', storage_path('compose')) . DIRECTORY_SEPARATOR . $composeName . '.yml';
+        if(!file_exists($composeFile)){
+            throw new NoticeMessageException('Compose File Name is not exist');
+        }
+        $command = "docker stack deploy -c $composeFile $Name";
+        System::putCommand('stack_create_' . time(), $command);
     }
 
     public function remove(){

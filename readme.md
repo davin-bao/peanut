@@ -8,13 +8,15 @@
 
 Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
 
-## Official Documentation
+## Install
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+1. Install python 2.7
+2. Run monitor.py
+```
+nohup python monitor.py >/dev/null  2>&1  &
+```
+3. Run Peanut Container
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
 
 ## License
 

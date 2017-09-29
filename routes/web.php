@@ -33,4 +33,9 @@ $router->post('composes/create', ['as' => 'compose_create', 'uses' => 'ComposeCo
 $router->delete('composes/{Name}', ['as' => 'compose_remove', 'uses' => 'ComposeController@postRemove']);
 $router->get('composes', ['as' => 'compose_list', 'uses' => 'ComposeController@getList']);
 
+$router->post('system/command', ['as' => 'system_command_create', 'uses' => 'SystemController@postCommand']);
+$router->get('system/command', ['as' => 'system_command', 'uses' => 'SystemController@getCommand']);
+$router->post('system/command-result', ['as' => 'system_command_result_create', 'uses' => 'SystemController@postCommandResult']);
+$router->get('system/command-result', ['as' => 'system_command_result', 'uses' => 'SystemController@getCommandResult']);
+
 $router->get('/', ['as' => 'index', 'uses' => 'IndexController@getIndex']);
