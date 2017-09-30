@@ -11,8 +11,9 @@
 |
 */
 
-$router->post('nodes/{id}', ['as' => 'node_update', 'uses' => 'NodeController@postUpdate']);
 $router->get('nodes/{Id}', ['as' => 'node_inspect', 'uses' => 'NodeController@getDetail']);
+$router->post('nodes/{id}', ['as' => 'node_update', 'uses' => 'NodeController@postUpdate']);
+$router->get('nodes/status/{endpoint}', ['as' => 'nodes_status', 'uses' => 'NodeController@getStatus']);
 $router->get('nodes', ['as' => 'node_list', 'uses' => 'NodeController@getList']);
 $router->get('containers/{endpoint}', ['as' => 'container_list', 'uses' => 'ContainerController@getList']);
 
@@ -33,7 +34,7 @@ $router->post('composes/create', ['as' => 'compose_create', 'uses' => 'ComposeCo
 $router->delete('composes/{Name}', ['as' => 'compose_remove', 'uses' => 'ComposeController@postRemove']);
 $router->get('composes', ['as' => 'compose_list', 'uses' => 'ComposeController@getList']);
 
-$router->post('system/command', ['as' => 'system_command_create', 'uses' => 'SystemController@postCommand']);
+$router->post('system/status', ['as' => 'system_status', 'uses' => 'SystemController@getStatus']);
 $router->get('system/command', ['as' => 'system_command', 'uses' => 'SystemController@getCommand']);
 $router->post('system/command-result', ['as' => 'system_command_result_create', 'uses' => 'SystemController@postCommandResult']);
 $router->get('system/command-result', ['as' => 'system_command_result', 'uses' => 'SystemController@getCommandResult']);

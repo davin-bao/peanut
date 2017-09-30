@@ -1,7 +1,6 @@
 <?php
 namespace App\Model;
 
-use Exception;
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -21,10 +20,11 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
     }
 
     private static function getUri($uri){
-        $host = $uri == null ? env('DOCKER_URL', 'http://127.0.0.1') : 'http://' . $uri;
+        if($uri) return $uri;
+
+        $host = env('DOCKER_URL', 'http://127.0.0.1');
         $port = env('DOCKER_PORT', '2376');
         $version = env('DOCKER_VERSION', 'v1.30');
-
         return $host . ':' . $port . '/' . $version . '/';
     }
 
@@ -40,7 +40,7 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         curl_close($ch);
 
         if($httpCode !== 200) {
-            throw new HttpException($httpCode);
+            throw new HttpException($body, $httpCode);
         } else {
             $body = json_decode($body, true);
             return $body;

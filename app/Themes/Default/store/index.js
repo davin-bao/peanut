@@ -2,11 +2,13 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import menu from '../menu';
+import util from '../libs/util';
 
 Vue.use(Vuex);
 
 const NODES_PATH = '/nodes';
 const NODES_INSPECT_PATH = '/nodes/';
+const NODES_STATUS_PATH = '/nodes/status/';
 const CONTAINERS_PATH = '/containers';
 const STACKS_PATH = '/stacks';
 const STACKS_CREATE_PATH = '/stacks/create';
@@ -33,6 +35,7 @@ const store = new Vuex.Store({
         endpoint: 'http://peanut.local',
         nodes: {loading: null, data: []},
         node: {loading: null, data: {}},
+        nodeStatus: [],
         stacks: {loading: null, data: []},
         services: {loading: null, data: []},
         containers: {loading: null, data: []},
@@ -106,12 +109,13 @@ const store = new Vuex.Store({
             }
         },
         async getNodeStatus(state, address){
-            var endpoint = address.substring(0, address.indexOf(':'));
+            var endpoint = address.substring(0, address.indexOf(':')).split('.').join('-');
             var response = await axios({
                 method: 'get',
-                url: 'http://' + endpoint + ':8888/?command=status'
+                url: state.endpoint + NODES_STATUS_PATH + endpoint
             });
-            console.log(response);
+            //state.nodeStatus.push();
+            console.log(response, (new Date()).format('hh:mm:ss'));
         },
         async getContainers (state){
             state.containers.loading = true;

@@ -8,12 +8,6 @@ use Illuminate\Http\Request;
 class SystemController extends Controller
 {
 
-    public function getStatus(){
-        $result = System::getStatus();
-
-        return $this->response($result);
-    }
-
     public function postCommand(Request $request){
         System::putCommand($request->get('Id'), $request->get('Command'));
 

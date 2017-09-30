@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
+import VueChart from 'vue-chart-js';
 import Routers from './router';
 import Util from './libs/util';
 import App from './App.vue';
@@ -46,6 +47,7 @@ router.afterEach((to, from, next) => {
 });
 
 Vue.component('v-substr', VSubstr);
+Vue.component('vue-chart', VueChart);
 
 new Vue({
     el: '#app',

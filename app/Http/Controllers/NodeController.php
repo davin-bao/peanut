@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\Node;
+use App\Model\System;
 use Illuminate\Http\Request;
 
 class NodeController extends Controller
@@ -32,6 +33,13 @@ class NodeController extends Controller
         $node->update($availability, $name, $role, $labels);
 
         return $this->response([]);
+    }
+
+    public function getStatus($endpoint){
+        $endpoint = str_replace('-', '.', $endpoint);
+        $result = System::getStatus($endpoint);
+
+        return $this->response($result);
     }
 
     //
