@@ -48,6 +48,8 @@ class Handler extends ExceptionHandler
     {
         if($e instanceof PremiumDomainBusinessSupportException){
             $e = new NoticeMessageException($e->getCHNExceptionNoticeMessage());
+        }else if ($e instanceof NoticeMessageException) {
+            //
         }else if ($e instanceof HttpException) {
             throw $e;
             $e = new HttpException($e->getStatusCode(), $e->getMessage(), $e, $e->getHeaders(), $e->getStatusCode());

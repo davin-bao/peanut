@@ -1,6 +1,7 @@
 <?php
 namespace App\Model;
 
+use App\Exceptions\NoticeMessageException;
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -38,6 +39,11 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         $body = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+
+        if($httpCode === 503) {
+            $body = json_decode($body, true);
+            throw new NoticeMessageException($body['message']);
+        }
 
         if($httpCode !== 200) {
             throw new HttpException($body, $httpCode);

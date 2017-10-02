@@ -124,13 +124,13 @@
         },
         methods: {
             change() {
-                var chartLabels = this.cpuData.labels;
+                var chartLabels = this.cpu.labels;
                 chartLabels.push((new Date()).format('hh:mm:ss'));
-                this.cpu.labels = chartLabels.length > this.cpuCount ? chartLabels.splice(chartLabels.length - this.cpuCount, chartLabels.length) : chartLabels;
+                this.cpu.labels = chartLabels.length > this.cpu.count ? chartLabels.splice(chartLabels.length - this.cpu.count, chartLabels.length) : chartLabels;
 
                 var chartData = this.cpu.data;
                 chartData.push(Util.random(0,10));
-                this.cpu.data = chartData.length > this.cpuCount ? chartData.splice(chartData.length - this.cpuCount, chartData.length) : chartData;
+                this.cpu.data = chartData.length > this.cpu.count ? chartData.splice(chartData.length - this.cpu.count, chartData.length) : chartData;
 
 
                 this.cpu.dataSet = [
