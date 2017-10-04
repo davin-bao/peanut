@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Cache;
 class System extends DockerApiModel {
 
     public static function getStatus($uri){
+        return [
+            'cpu' => 90,
+            'memTotal' => 900,
+            'memFree' => 800
+        ];
         $uri = 'http://' . $uri . ':8888';
         //%Cpu(s): 0.9 us, 0.3 sy, 0.0 ni, 98.7 id, 0.1 wa, 0.0 hi, 0.0 si, 0.1 st@KiB Mem : 16266460 total, 7605332 free, 4267496 used, 4393632 buff/cache
         $statusStr = static::HttpGet('?command=status', $uri);

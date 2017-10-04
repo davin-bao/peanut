@@ -72,7 +72,7 @@
                     <v-card flat>
                         <v-card-title class="title">CPU</v-card-title>
                         <v-card-text>
-                            <vue-chart type="line" :data="cpu.data"></vue-chart>
+                            <vue-chart type="line" :data="cpu.chartData"></vue-chart>
                         </v-card-text>
                     </v-card>
                 </v-flex>
@@ -80,7 +80,7 @@
                     <v-card flat>
                         <v-card-title class="title">Memory</v-card-title>
                         <v-card-text>
-                            <vue-chart type="line" :data="memory.data"></vue-chart>
+                            <vue-chart type="line" :data="memory.chartData"></vue-chart>
                         </v-card-text>
                     </v-card>
                 </v-flex>
@@ -96,21 +96,22 @@
     export default {
         data () {
             return {
+                chartOptions: {},
                 cpu: {
                     dataBackgroundColor: null,
                     dataBorderColor: null,
-                    dataSet: {},
+                    chartData: {},
                     labels: [],
                     data: [],
-                    count: 10
+                    count: 50
                 },
                 memory: {
                     dataBackgroundColor: null,
                     dataBorderColor: null,
-                    dataSet: {},
+                    chartData: {},
                     labels: [],
                     data: [],
-                    count: 10
+                    count: 50
                 }
             }
         },
@@ -124,24 +125,17 @@
         },
         methods: {
             change() {
-                var chartLabels = this.cpu.labels;
+                var chartLabels = this.cpu.chartData.labels;
                 chartLabels.push((new Date()).format('hh:mm:ss'));
-                this.cpu.labels = chartLabels.length > this.cpu.count ? chartLabels.splice(chartLabels.length - this.cpu.count, chartLabels.length) : chartLabels;
+                this.cpu.chartData.labels = chartLabels.length > this.cpu.count ? chartLabels.splice(chartLabels.length - this.cpu.count, chartLabels.length) : chartLabels;
 
-                var chartData = this.cpu.data;
+                this.memory.chartData.labels = this.cpu.chartData.labels;
+
+                var chartData = this.cpu.chartData.datasets[0].data;
                 chartData.push(Util.random(0,10));
-                this.cpu.data = chartData.length > this.cpu.count ? chartData.splice(chartData.length - this.cpu.count, chartData.length) : chartData;
+                this.cpu.chartData.datasets[0].data = chartData.length > this.cpu.count ? chartData.splice(chartData.length - this.cpu.count, chartData.length) : chartData;
 
-
-                this.cpu.dataSet = [
-                    {
-                        label: 'CPU',
-                        data: this.cpu.data,
-                        backgroundColor: this.cpu.backgroundColor,
-                        borderColor: this.cpu.borderColor,
-                        borderWidth: 1
-                    }
-                ];
+                this.memory.chartData.datasets[0].data = this.cpu.chartData.datasets[0].data;
             },
             monitor() {
                 this.cpu.backgroundColor = Util.randomColorRgba(0.4);
@@ -154,7 +148,7 @@
                     this.memory.labels.push(0);
                     this.memory.data.push(0);
                 }
-                let options = {
+                this.chartOptions = {
                     scales: {
                         yAxes: [{
                             ticks: {
@@ -164,7 +158,7 @@
                     }
                 };
 
-                this.cpu.dataSet = {
+                this.cpu.chartData = {
                     labels: this.cpu.labels,
                     datasets: [
                         {
@@ -175,10 +169,10 @@
                             borderWidth: 1
                         }
                     ],
-                    options: options
+                    options: this.chartOptions
                 };
 
-                this.memory.dataSet = {
+                this.memory.chartData = {
                     labels: this.memory.labels,
                     datasets: [
                         {
@@ -189,7 +183,7 @@
                             borderWidth: 1
                         }
                     ],
-                    options: options
+                    options: this.chartOptions
                 };
 
             },

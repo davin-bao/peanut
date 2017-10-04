@@ -32,7 +32,7 @@ const store = new Vuex.Store({
         pageTitle: 'Home',
         menu: menu,
         breadcrumbs: [],
-        endpoint: 'http://peanut.local',
+        endpoint: 'http://localhost:8000',
         nodes: {loading: null, data: []},
         node: {loading: null, data: {}},
         nodeStatus: [],

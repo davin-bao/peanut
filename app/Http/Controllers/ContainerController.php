@@ -3,9 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Model\Container;
+use Illuminate\Http\Request;
 
 class ContainerController extends Controller
 {
+
+    public function getDetail($endpoint, $Id){
+        $endpoint = str_replace('-', '.', $endpoint);
+        $item = Container::get($endpoint, $Id);
+        return $this->response($item);
+    }
+
+    public function getLog(Request $request, $endpoint, $Id){
+        $endpoint = str_replace('-', '.', $endpoint);
+        $stdout=$request->get('stdout', 1);
+        $stderr=$request->get('stderr', 0);
+        $since=$request->get('since', 0);
+        $timestamps=$request->get('timestamps', 0);
+        $tail=$request->get('tail', 'all');
+        $item = Container::getLogs($endpoint, $Id, $stdout, $stderr, $since, $timestamps, $tail);
+
+        return $this->response($item);
+    }
 
     public function getList($endpoint){
         $result = [];
