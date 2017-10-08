@@ -11,6 +11,7 @@
 |
 */
 
+$router->get('nodes/create', ['as' => 'node_create', 'uses' => 'NodeController@getCreateCommand']);
 $router->get('nodes/{Id}', ['as' => 'node_detail', 'uses' => 'NodeController@getDetail']);
 $router->post('nodes/{id}', ['as' => 'node_update', 'uses' => 'NodeController@postUpdate']);
 $router->get('nodes/status/{endpoint}', ['as' => 'nodes_status', 'uses' => 'NodeController@getStatus']);

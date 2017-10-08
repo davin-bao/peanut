@@ -42,5 +42,14 @@ class NodeController extends Controller
         return $this->response($result);
     }
 
+    public function getCreateCommand(){
+        $workerCommand = System::getAddWorkNodeCommand();
+        $managerCommand = System::getAddManagerNodeCommand();
+        return $this->response([
+            'workCommand' => $workerCommand,
+            'managerCommand' => $managerCommand
+        ]);
+    }
+
     //
 }

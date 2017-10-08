@@ -5,6 +5,34 @@ use Illuminate\Support\Facades\Cache;
 
 class System extends DockerApiModel {
 
+    public static function getAddWorkNodeCommand(){
+        $host = env('DOCKER_URL', 'http://127.0.0.1');
+        $uri = $host . ':8888/';
+        $result = static::HttpGet('?command=docker%20swarm%20join-token%20worker', $uri);
+        $result = array_get($result, 'Result', '');
+        $splitStr = 'following command:';
+        if(strpos($result, $splitStr) < 0) {
+            throw new NoticeMessageException('Get swarm join command failed');
+        }
+
+        list($title, $command) = explode($splitStr, $result);
+        return trim($command);
+    }
+
+    public static function getAddManagerNodeCommand(){
+        $host = env('DOCKER_URL', 'http://127.0.0.1');
+        $uri = $host . ':8888';
+        $result = static::HttpGet('?command=docker%20swarm%20join-token%20manager', $uri);
+        $result = array_get($result, 'Result', '');
+        $splitStr = 'following command:';
+        if(strpos($result, $splitStr) < 0) {
+            throw new NoticeMessageException('Get swarm join command failed');
+        }
+
+        list($title, $command) = explode($splitStr, $result);
+        return trim($command);
+    }
+
     public static function getStatus($uri){
         return [
             'cpu' => random_int(0, 100),
