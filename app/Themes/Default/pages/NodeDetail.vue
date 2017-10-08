@@ -31,10 +31,10 @@
                     <v-card flat>
                         <v-card-title class="title">Node specification</v-card-title>
                         <v-card-text>
-                            <p class="caption">Name: {{ node.data.Name }}</p>
+                            <p class="caption">Name: {{ node.data.Spec.Name }}</p>
                             <p class="caption">Host Name: {{ node.data.Description.Hostname }}</p>
-                            <p class="caption">Role: {{ node.data.Role }}</p>
-                            <p class="caption">Availability: {{ node.data.Availability }}</p>
+                            <p class="caption">Role: {{ node.data.Spec.Role }}</p>
+                            <p class="caption">Availability: {{ node.data.Spec.Availability }}</p>
                             <p class="caption">Status: <v-chip label class="success white--text">{{ node.data.Status.State }}</v-chip></p>
                         </v-card-text>
                     </v-card>
@@ -63,7 +63,7 @@
                 <v-flex d-flex xs12 sm6 md4>
                     <v-card flat>
                         <v-card-title class="title">Labels</v-card-title>
-                        <v-card-text v-for="(value, index) in node.Labels" :key="value">
+                        <v-card-text v-for="(value, index) in node.data.Spec.Labels" :key="value">
                             <p class="caption">{{ index }}: {{ value }}</p>
                         </v-card-text>
                     </v-card>
@@ -109,6 +109,7 @@
                     dataBackgroundColor: null,
                     dataBorderColor: null,
                     chartData: {},
+                    chartData: {},
                     labels: [],
                     data: [],
                     count: 50
@@ -121,21 +122,33 @@
             this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'nouns.node_detail'}]);
             this.$store.commit('getNode', this.$route.params.id);
             this.monitor();
-            setInterval(this.change, 1000);
+            setInterval(this.change, 5000);
         },
         methods: {
             change() {
-                var chartLabels = this.cpu.chartData.labels;
-                chartLabels.push((new Date()).format('hh:mm:ss'));
-                this.cpu.chartData.labels = chartLabels.length > this.cpu.count ? chartLabels.splice(chartLabels.length - this.cpu.count, chartLabels.length) : chartLabels;
+                if(!this.node.data.ManagerStatus){
+                    return;
+                }
+                this.$store.commit('getNodeStatus', this.node.data.ManagerStatus.Addr);
+                if(this.nodeStatus.length <= 0){
+                    return;
+                }
 
-                this.memory.chartData.labels = this.cpu.chartData.labels;
+                var chartCpuLabels = this.cpu.chartData.labels;
+                var chartMemoryLabels = this.memory.chartData.labels;
+                var chartCpuData = this.cpu.chartData.datasets[0].data;
+                var chartMemoryData = this.memory.chartData.datasets[0].data;
+                for(var i=0; i<this.nodeStatus.length; i++){
+                    chartCpuLabels.push(this.nodeStatus[i].key);
+                    chartCpuData.push(this.nodeStatus[i].value.cpu);
+                    chartMemoryLabels.push(this.nodeStatus[i].key);
+                    chartMemoryData.push(this.nodeStatus[i].value.memFree * 100/this.nodeStatus[i].value.memTotal);
+                }
 
-                var chartData = this.cpu.chartData.datasets[0].data;
-                chartData.push(Util.random(0,10));
-                this.cpu.chartData.datasets[0].data = chartData.length > this.cpu.count ? chartData.splice(chartData.length - this.cpu.count, chartData.length) : chartData;
-
-                this.memory.chartData.datasets[0].data = this.cpu.chartData.datasets[0].data;
+                this.cpu.chartData.labels = chartCpuLabels.length > this.cpu.count ? chartCpuLabels.splice(chartCpuLabels.length - this.cpu.count, chartCpuLabels.length) : chartCpuLabels;
+                this.memory.chartData.labels = chartMemoryLabels.length > this.cpu.count ? chartMemoryLabels.splice(chartMemoryLabels.length - this.cpu.count, chartMemoryLabels.length) : chartMemoryLabels;
+                this.cpu.chartData.datasets[0].data = chartCpuData.length > this.cpu.count ? chartCpuData.splice(chartCpuData.length - this.cpu.count, chartCpuData.length) : chartCpuData;
+                this.memory.chartData.datasets[0].data = chartMemoryData.length > this.memory.count ? chartMemoryData.splice(chartMemoryData.length - this.memory.count, chartMemoryData.length) : chartMemoryData;
             },
             monitor() {
                 this.cpu.backgroundColor = Util.randomColorRgba(0.4);
@@ -162,7 +175,7 @@
                     labels: this.cpu.labels,
                     datasets: [
                         {
-                            label: 'CPU',
+                            label: '%',
                             data: this.cpu.data,
                             backgroundColor: this.cpu.backgroundColor,
                             borderColor: this.cpu.borderColor,
@@ -176,7 +189,7 @@
                     labels: this.memory.labels,
                     datasets: [
                         {
-                            label: 'Memory',
+                            label: '%',
                             data: this.memory.data,
                             backgroundColor: this.memory.backgroundColor,
                             borderColor: this.memory.borderColor,
@@ -195,8 +208,11 @@
             }
         },
         computed: {
-            ...mapState(['node'])
-        }
+            ...mapState(['node', 'nodeStatus'])
+        },
+        destoryed (){
+            console.log('=======beforeDestory');
+        },
     }
 </script>
 

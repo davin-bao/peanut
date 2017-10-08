@@ -3,42 +3,20 @@ namespace App\Model;
 
 class Node extends DockerApiModel {
 
-    public static function get($id){
-        $item = parent::HttpGet('nodes/' . $id);
+    const LIST_PATH = 'nodes';
+    const GET_PATH = 'nodes/{id}';
 
-        return new Node([
-            'ID' => array_get($item, 'ID'),
-            'Version' => array_get($item, 'Version.Index'),
-            'CreatedAt' => array_get($item, 'CreatedAt'),
-            'UpdatedAt' => array_get($item, 'UpdatedAt'),
-            'Name' => array_get($item, 'Spec.Name', ''),
-            'Availability' => array_get($item, 'Spec.Availability'),
-            'Labels' => array_get($item, 'Spec.Labels'),
-            'Role' => array_get($item, 'Spec.Role'),
-            'Description'=> array_get($item, 'Description'),
-            'Status' => array_get($item, 'Status'),
-            'ManagerStatus' => array_get($item, 'ManagerStatus'),
-        ]);
+    public static function get($Id, $uri=null){
+        $item = static::HttpGet(str_replace('{id}', $Id, self::GET_PATH), $uri);
+        return static::getInstanceByJson($item);
     }
 
-    public static function find(){
+    public static function find($uri=null){
         $result = [];
-        $list = parent::HttpGet('nodes');
+        $list = static::HttpGet(self::LIST_PATH, $uri);
 
         foreach($list as $item){
-            array_push($result, new Node([
-                'ID' => array_get($item, 'ID'),
-                'Version' => array_get($item, 'Version.Index'),
-                'CreatedAt' => array_get($item, 'CreatedAt'),
-                'UpdatedAt' => array_get($item, 'UpdatedAt'),
-                'Name' => array_get($item, 'Spec.Name', ''),
-                'Availability' => array_get($item, 'Spec.Availability'),
-                'Labels' => array_get($item, 'Spec.Labels'),
-                'Role' => array_get($item, 'Spec.Role'),
-                'Description'=> array_get($item, 'Description'),
-                'Status' => array_get($item, 'Status'),
-                'ManagerStatus' => array_get($item, 'ManagerStatus'),
-            ]));
+            array_push($result, static::getInstanceByJson($item));
         }
         return $result;
     }
@@ -55,6 +33,6 @@ class Node extends DockerApiModel {
             'Labels' => (object)$this->Labels,
         ];
 
-        return parent::HttpPost('nodes/' . $this->ID . '/update?version=' . $this->Version, $attributes);
+        return parent::HttpPost('nodes/' . $this->ID . '/update?version=' . $this->Version->Index, $attributes);
     }
 }

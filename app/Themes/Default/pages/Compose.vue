@@ -135,7 +135,6 @@
         mounted () {
             this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.compose'}]);
             this.refreshAll();
-            console.log(this.newItem);
         },
         methods: {
             removeAllAction() {

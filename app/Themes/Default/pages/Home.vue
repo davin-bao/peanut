@@ -8,7 +8,7 @@
                 <v-flex xs12 md6 lg4 xl3 v-for="item in nodes.data" :key="nodes.data.ID">
                     <v-card>
                         <v-card-title primary-title>
-                            <h6 class=" mb-0">{{ item.Name !== '' ? item.Name : item.Description.Hostname }}</h6>
+                            <h6 class=" mb-0">{{ item.Spec.Name !== '' ? item.Spec.Name : item.Description.Hostname }}</h6>
                             <div>Docker Version: {{ item.Description.Engine.EngineVersion }}</div>
                         </v-card-title>
                         <v-card-text>
@@ -18,7 +18,7 @@
                             </div>
                             <v-divider></v-divider>
                             <div class="text-xs-left">
-                                <v-chip label class="pink white--text" v-for="(value, index) in item.Labels" :key="value"> {{ index + '=' + value }} </v-chip>
+                                <v-chip label class="pink white--text" v-for="(value, index) in item.Spec.Labels" :key="value"> {{ index + '=' + value }} </v-chip>
                             </div>
                             <v-divider></v-divider>
                             <p></p>
@@ -29,8 +29,8 @@
                             <p></p>
                             <p class="caption">Address: {{ item.Status.Addr }}</p>
                             <p class="caption">Manager address: {{ item.ManagerStatus.Addr }}</p>
-                            <p class="caption">Role: {{ item.Role }}</p>
-                            <p class="caption">Availability: {{ item.Availability }}</p>
+                            <p class="caption">Role: {{ item.Spec.Role }}</p>
+                            <p class="caption">Availability: {{ item.Spec.Availability }}</p>
                             <p class="caption">Reachability: {{ item.ManagerStatus.Reachability }}</p>
                             <v-divider></v-divider>
                             <v-data-table

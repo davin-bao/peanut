@@ -50,9 +50,9 @@
                             hide-details
                             v-model="props.selected"
                     ></v-checkbox>
-                    <td>{{ props.item.Name }}</td>
+                    <td>{{ props.item.Spec.Name }}</td>
                     <td>{{ props.item.Image }}</td>
-                    <td>{{ props.item.SchedulingMode }}</td>
+                    <td>{{ props.item.Spec.Mode.Replicated.Replicas }}</td>
                     <td>{{ props.item.PublishedPorts }}</td>
                     <td>{{ props.item.Stack }}</td>
                     <td>{{ props.item.UpdatedAt }}</td>

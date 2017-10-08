@@ -114,8 +114,7 @@ const store = new Vuex.Store({
                 method: 'get',
                 url: state.endpoint + NODES_STATUS_PATH + endpoint
             });
-            //state.nodeStatus.push();
-            console.log(response, (new Date()).format('hh:mm:ss'));
+            state.nodeStatus.push({key: (new Date()).format('hh:mm:ss'), value: response.data});
         },
         async getContainers (state){
             state.containers.loading = true;

@@ -4,7 +4,7 @@ namespace App\Model;
 use App\Exceptions\NoticeMessageException;
 
 class Service extends DockerApiModel {
-    const GET_PATH = 'services/';
+    const GET_PATH = 'services/{id}';
     const LIST_PATH = 'services';
     const CREATE_PATH = 'services/create';
     const REMOVE_PATH = 'services/';
@@ -12,32 +12,8 @@ class Service extends DockerApiModel {
     const LOGS_PATH = 'services/{$Id}/logs';
 
     public static function get($Id){
-        $item = parent::HttpGet(static::GET_PATH . $Id);
-
-        $publishedPorts = [];
-        $ports = array_get($item, 'Endpoint.Ports', []);
-        foreach($ports as $port){
-            if(array_get($port, 'PublishedPort', false)){
-                array_push($publishedPorts, array_get($port, 'PublishedPort') . ':' . array_get($port, 'TargetPort'));
-            }
-        }
-
-        return new Service([
-            'ID' => array_get($item, 'ID'),
-            'Version' => array_get($item, 'Version.Index'),
-            'CreatedAt' => array_get($item, 'CreatedAt'),
-            'UpdatedAt' => array_get($item, 'UpdatedAt'),
-            'Name' => array_get($item, 'Spec.Name'),
-            'Labels' => array_get($item, 'Spec.Labels'),
-            'TaskTemplate' => array_get($item, 'Spec.TaskTemplate'),
-            'EndpointSpec' => array_get($item, 'Spec.EndpointSpec'),
-            'Mode' => array_get($item, 'Spec.Mode'),
-            'Image' => array_get(array_get($item, "Spec.Labels"), 'com.docker.stack.image', ''),
-            'Stack' => array_get(array_get($item, "Spec.Labels"), 'com.docker.stack.namespace', ''),
-            'SchedulingMode' => array_get($item, "Spec.Mode.Replicated.Replicas"),
-            'PublishedPorts' => implode(' ', $publishedPorts),
-            'Endpoint' => array_get($item, 'Endpoint')
-        ]);
+        $item = static::HttpGet(str_replace('{id}', $Id, self::GET_PATH));
+        return static::getInstanceByJson($item);
     }
 
     public static function find(){
@@ -45,6 +21,7 @@ class Service extends DockerApiModel {
         $list = parent::HttpGet( static::LIST_PATH);
 
         foreach($list as $item){
+            $entity = static::getInstanceByJson($item);
             $publishedPorts = [];
             $ports = array_get($item, 'Endpoint.Ports', []);
             foreach($ports as $port){
@@ -52,23 +29,10 @@ class Service extends DockerApiModel {
                     array_push($publishedPorts, array_get($port, 'PublishedPort') . ':' . array_get($port, 'TargetPort'));
                 }
             }
-
-            array_push($result, new Service([
-                'ID' => array_get($item, 'ID'),
-                'Version' => array_get($item, 'Version.Index'),
-                'CreatedAt' => array_get($item, 'CreatedAt'),
-                'UpdatedAt' => array_get($item, 'UpdatedAt'),
-                'Name' => array_get($item, 'Spec.Name'),
-                'Labels' => array_get($item, 'Spec.Labels'),
-                'TaskTemplate' => array_get($item, 'Spec.TaskTemplate'),
-                'EndpointSpec' => array_get($item, 'Spec.EndpointSpec'),
-                'Mode' => array_get($item, 'Spec.Mode'),
-                'Image' => array_get(array_get($item, "Spec.Labels"), 'com.docker.stack.image', ''),
-                'Stack' => array_get(array_get($item, "Spec.Labels"), 'com.docker.stack.namespace', ''),
-                'SchedulingMode' => array_get($item, "Spec.Mode.Replicated.Replicas"),
-                'PublishedPorts' => implode(' ', $publishedPorts),
-                'Endpoint' => array_get($item, 'Endpoint')
-            ]));
+            $entity->PublishedPorts = implode(' ', $publishedPorts);
+            $entity->Image = array_get(array_get($item, "Spec.Labels"), 'com.docker.stack.image', '');
+            $entity->Stack = array_get(array_get($item, "Spec.Labels"), 'com.docker.stack.namespace', '');
+            array_push($result, $entity);
         }
         return $result;
     }

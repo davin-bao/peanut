@@ -15,6 +15,9 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
 
     protected $attributes = [];
 
+    protected static $getPath = '';
+    protected static $findPath = '';
+
     public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
@@ -168,5 +171,15 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
     public function toArray()
     {
         return $this->attributes;
+    }
+
+    public static function getInstanceByJson($jsonArray){
+        $refl = new \ReflectionClass(get_called_class());
+        $entity = $refl->newInstance();
+        foreach($jsonArray as $index=>$value){
+            $entity->$index = $value;
+        }
+
+        return $entity;
     }
 }

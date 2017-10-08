@@ -119,17 +119,6 @@
         mounted () {
         },
         watch: {
-//            '$route' (to, from) {
-//                var self = this;
-//                self.menus.forEach(function(menu) {
-//                    if(to.path == menu.href || (to.path == '' && menu.href == '/')){
-//                        menu.active = true;
-//                        self.breadcrumbs.push({ text: menu.title});
-//                    }else{
-//                        menu.active = false;
-//                    }
-//                });
-//            }
         },
         computed: {
                 ...mapState(['message', 'deleteConfirm', 'menu', 'pageTitle', 'breadcrumbs'])
