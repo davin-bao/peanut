@@ -15,7 +15,6 @@ class NodeController extends Controller
         foreach($list as $item){
             array_push($result, $item->toArray());
         }
-
         return $this->response($result);
     }
 

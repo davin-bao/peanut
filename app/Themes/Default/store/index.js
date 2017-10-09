@@ -7,6 +7,7 @@ import util from '../libs/util';
 Vue.use(Vuex);
 
 const NODES_PATH = '/nodes';
+const NODE_CREATE_PATH = '/nodes/create';
 const NODES_INSPECT_PATH = '/nodes/';
 const NODES_STATUS_PATH = '/nodes/status/';
 const CONTAINERS_PATH = '/containers';
@@ -32,9 +33,10 @@ const store = new Vuex.Store({
         pageTitle: 'Home',
         menu: menu,
         breadcrumbs: [],
-        endpoint: 'http://localhost:8000',
-        nodes: {loading: null, data: []},
+        endpoint: 'http://peanut.local',
+        nodes: {loading: null, statusLoading: null, data: []},
         node: {loading: null, data: {}},
+        nodeCreateCommand: {show: false, loading: null, data: { workCommand: '', managerCommand: ''}},
         nodeStatus: [],
         stacks: {loading: null, data: []},
         services: {loading: null, data: []},
@@ -77,15 +79,63 @@ const store = new Vuex.Store({
                     url: state.endpoint + NODES_PATH
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'get nodes error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
                 state.nodes.data = response.data;
                 await this.commit('getContainers');
+                await this.commit('getNodesStatus');
                 state.nodes.loading = false;
             }catch(e){
                 state.message = {body: 'get nodes error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async getNodesStatus (state){
+            state.nodes.statusLoading = true;
+            //获取当前节点的CPU及内存使用情况
+            for(var i=0; i<state.nodes.data.length; i++){
+                var nodeId = state.nodes.data[i].ID;
+                var address = state.nodes.data[i].ManagerStatus.Addr;
+                var endpoint = address.substring(0, address.indexOf(':')).split('.').join('-');
+                try{
+                    var response = await axios({
+                        method: 'get',
+                        url: state.endpoint + NODES_STATUS_PATH + endpoint
+                    });
+
+                    if(response.status == 299){
+                        state.message = {body: 'get containers error [' + response.data.msg + ']', show: true, type: 'error'};
+                        return;
+                    }
+
+                    state.nodes.data[i].status = {};
+                    state.nodes.data[i].status.cpu = parseFloat(util.numToCurrency(response.data.cpu, 2));
+                    state.nodes.data[i].status.memory = parseFloat(util.numToCurrency(response.data.memFree*100/response.data.memTotal, 2));
+                }catch(e){
+                    state.message = {body: 'get containers error [' + e.message + ']', show: true, type: 'error'};
+                }
+            }
+            state.nodes.statusLoading = false;
+        },
+        async getNodeCreateCommand(state) {
+            state.nodeCreateCommand.loading = true;
+            state.nodeCreateCommand.data = [];
+            try{
+                var response = await axios({
+                    method: 'get',
+                    url: state.endpoint + NODE_CREATE_PATH
+                });
+                if(response.status == 299){
+                    state.message = {body: 'get create node command error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+
+                state.nodeCreateCommand.data = response.data;
+                await this.commit('getContainers');
+                state.nodeCreateCommand.loading = false;
+            }catch(e){
+                state.message = {body: 'get create node command error [' + e.message + ']', show: true, type: 'error'};
             }
         },
         async getNode(state, ID) {
@@ -96,7 +146,7 @@ const store = new Vuex.Store({
                     url: state.endpoint + NODES_INSPECT_PATH + ID
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'get node detail error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -130,7 +180,7 @@ const store = new Vuex.Store({
                         url: state.endpoint + CONTAINERS_PATH + '/' + endpoint
                     });
                     if(response.status == 299){
-                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        state.message = {body: 'get containers error [' + response.data.msg + ']', show: true, type: 'error'};
                         return;
                     }
 
@@ -153,7 +203,7 @@ const store = new Vuex.Store({
                     url: state.endpoint + STACKS_PATH
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'get stacks error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -171,7 +221,7 @@ const store = new Vuex.Store({
                     data: newItem
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'create stack error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -189,7 +239,7 @@ const store = new Vuex.Store({
                         url: state.endpoint + STACKS_REMOVE_PATH + items[i].Id
                     });
                     if(response.status == 299){
-                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        state.message = {body: 'remove stack error [' + response.data.msg + ']', show: true, type: 'error'};
                         return;
                     }
 
@@ -211,7 +261,7 @@ const store = new Vuex.Store({
                     url: state.endpoint + SERVICES_PATH
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'get services error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
                 if(typeof(Stack) == 'undefined'){
@@ -236,7 +286,7 @@ const store = new Vuex.Store({
                     data: newItem
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'create service error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -254,7 +304,7 @@ const store = new Vuex.Store({
                         url: state.endpoint + SERVICES_REMOVE_PATH + items[i].Id
                     });
                     if(response.status == 299){
-                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        state.message = {body: 'remove service error [' + response.data.msg + ']', show: true, type: 'error'};
                         return;
                     }
 
@@ -276,7 +326,7 @@ const store = new Vuex.Store({
                     url: state.endpoint + NETWORKS_PATH
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'get networks error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -294,7 +344,7 @@ const store = new Vuex.Store({
                     data: newItem
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'create network error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
 
@@ -312,7 +362,7 @@ const store = new Vuex.Store({
                         url: state.endpoint + NETWORKS_REMOVE_PATH + items[i].Id
                     });
                     if(response.status == 299){
-                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        state.message = {body: 'remove network error [' + response.data.msg + ']', show: true, type: 'error'};
                         return;
                     }
 
@@ -353,7 +403,7 @@ const store = new Vuex.Store({
                     data: newItem
                 });
                 if(response.status == 299){
-                    state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                    state.message = {body: 'create compose error [' + response.data.msg + ']', show: true, type: 'error'};
                     return;
                 }
                 state.message = {body: 'create compose success', show: true, type: 'success'};
@@ -370,7 +420,7 @@ const store = new Vuex.Store({
                         url: state.endpoint + COMPOSES_REMOVE_PATH + items[i].Name
                     });
                     if(response.status == 299){
-                        state.message = {body: 'get composes error [' + response.data.msg + ']', show: true, type: 'error'};
+                        state.message = {body: 'remove composes error [' + response.data.msg + ']', show: true, type: 'error'};
                         return;
                     }
                 }catch(e){

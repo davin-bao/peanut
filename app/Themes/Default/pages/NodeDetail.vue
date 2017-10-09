@@ -108,6 +108,7 @@
     export default {
         data () {
             return {
+                intervalId: null,
                 chartOptions: {},
                 cpu: {
                     dataBackgroundColor: null,
@@ -134,7 +135,7 @@
             this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'nouns.node_detail'}]);
             this.$store.commit('getNode', this.$route.params.id);
             this.monitor();
-            setInterval(this.change, 5000);
+            this.intervalId = setInterval(this.change, 5000);
         },
         methods: {
             change() {
@@ -222,9 +223,11 @@
         computed: {
             ...mapState(['node', 'nodeStatus'])
         },
-        destoryed (){
-            console.log('=======beforeDestory');
-        },
+        beforeDestroy:function(){
+            if(this.intervalId !== null){
+                clearInterval(this.intervalId);
+            }
+        }
     }
 </script>
 

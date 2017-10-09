@@ -16,6 +16,7 @@ class Node extends DockerApiModel {
         $list = static::HttpGet(self::LIST_PATH, $uri);
 
         foreach($list as $item){
+            $entity = static::getInstanceByJson($item);
             array_push($result, static::getInstanceByJson($item));
         }
         return $result;
