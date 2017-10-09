@@ -7,7 +7,9 @@ import util from '../libs/util';
 Vue.use(Vuex);
 
 const NODES_PATH = '/nodes';
-const NODE_CREATE_PATH = '/nodes/create';
+const NODES_CREATE_PATH = '/nodes/create';
+const NODES_UPDATE_PATH = '/nodes/';
+const NODES_REMOVE_PATH = '/nodes/';
 const NODES_INSPECT_PATH = '/nodes/';
 const NODES_STATUS_PATH = '/nodes/status/';
 const CONTAINERS_PATH = '/containers';
@@ -25,6 +27,7 @@ const NETWORKS_INSPECT_PATH = '/networks/';
 const NETWORKS_REMOVE_PATH = '/networks/';
 const COMPOSES_PATH = '/composes';
 const COMPOSES_CREATE_PATH = '/composes/create';
+const COMPOSES_UPDATE_PATH = '/composes/';
 const COMPOSES_INSPECT_PATH = '/composes/';
 const COMPOSES_REMOVE_PATH = '/composes/';
 
@@ -42,7 +45,7 @@ const store = new Vuex.Store({
         services: {loading: null, data: []},
         containers: {loading: null, data: []},
         networks: {loading: null, data: []},
-        composes: {loading: null, data: []},
+        composes: {loading: null, data: [], selectData:[]},
         message: {
             show: false,
             body: null,
@@ -124,7 +127,7 @@ const store = new Vuex.Store({
             try{
                 var response = await axios({
                     method: 'get',
-                    url: state.endpoint + NODE_CREATE_PATH
+                    url: state.endpoint + NODES_CREATE_PATH
                 });
                 if(response.status == 299){
                     state.message = {body: 'get create node command error [' + response.data.msg + ']', show: true, type: 'error'};
@@ -136,6 +139,24 @@ const store = new Vuex.Store({
                 state.nodeCreateCommand.loading = false;
             }catch(e){
                 state.message = {body: 'get create node command error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async updateNode(state, editItem){
+            try{
+                var response = await axios({
+                    headers: {'Content-Type': 'application/json; charset=UTF-8', 'Accept': 'application/json'},
+                    method: 'post',
+                    url: state.endpoint + NODES_UPDATE_PATH + editItem.ID,
+                    data: editItem
+                });
+                if(response.status == 299){
+                    state.message = {body: 'update node error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+                state.message = {body: 'update node success', show: true, type: 'success'};
+                await this.commit('getNode', editItem.ID);
+            }catch(e){
+                state.message = {body: 'update node error [' + e.message + ']', show: true, type: 'error'};
             }
         },
         async getNode(state, ID) {
@@ -157,6 +178,25 @@ const store = new Vuex.Store({
             }catch(e){
                 state.message = {body: 'get node error [' + e.message + ']', show: true, type: 'error'};
             }
+        },
+        async removeNode(state, items){
+            for(let i=0; i< items.length; i++){
+                try{
+                    var response = await axios({
+                        method: 'delete',
+                        url: state.endpoint + NODES_REMOVE_PATH + items[i].ID
+                    });
+                    if(response.status == 299){
+                        state.message = {body: 'remove node error [' + response.data.msg + ']', show: true, type: 'error'};
+                        return;
+                    }
+
+                }catch(e){
+                    state.message = {body: 'remove node error [' + e.message + ']', show: true, type: 'error'};
+                }
+            }
+
+            await this.commit('getNodes');
         },
         async getNodeStatus(state, address){
             var endpoint = address.substring(0, address.indexOf(':')).split('.').join('-');
@@ -213,12 +253,12 @@ const store = new Vuex.Store({
                 state.message = {body: 'get stacks error [' + e.message + ']', show: true, type: 'error'};
             }
         },
-        async createStack(state, newItem){
+        async createStack(state, editItem){
             try{
                 var response = await axios({
                     method: 'post',
                     url: state.endpoint + STACKS_CREATE_PATH,
-                    data: newItem
+                    data: editItem
                 });
                 if(response.status == 299){
                     state.message = {body: 'create stack error [' + response.data.msg + ']', show: true, type: 'error'};
@@ -278,12 +318,12 @@ const store = new Vuex.Store({
                 state.message = {body: 'get services error [' + e.message + ']', show: true, type: 'error'};
             }
         },
-        async createService(state, newItem){
+        async createService(state, editItem){
             try{
                 var response = await axios({
                     method: 'post',
                     url: state.endpoint + SERVICES_CREATE_PATH,
-                    data: newItem
+                    data: editItem
                 });
                 if(response.status == 299){
                     state.message = {body: 'create service error [' + response.data.msg + ']', show: true, type: 'error'};
@@ -336,12 +376,12 @@ const store = new Vuex.Store({
                 state.message = {body: 'get networks error [' + e.message + ']', show: true, type: 'error'};
             }
         },
-        async createNetwork(state, newItem){
+        async createNetwork(state, editItem){
             try{
                 var response = await axios({
                     method: 'post',
                     url: state.endpoint + NETWORKS_CREATE_PATH,
-                    data: newItem
+                    data: editItem
                 });
                 if(response.status == 299){
                     state.message = {body: 'create network error [' + response.data.msg + ']', show: true, type: 'error'};
@@ -388,19 +428,22 @@ const store = new Vuex.Store({
                     return;
                 }
                 state.composes.data = response.data;
+                for(var i=0; i<state.composes.data.length; i++){
+                    state.composes.selectData.push(state.composes.data[i].Name);
+                }
 
                 state.composes.loading = false;
             }catch(e){
                 state.message = {body: 'get composes error [' + e.message + ']', show: true, type: 'error'};
             }
         },
-        async createCompose(state, newItem){
+        async createCompose(state, editItem){
             try{
                 var response = await axios({
                     headers: {'Content-Type': 'application/json; charset=UTF-8', 'Accept': 'application/json'},
                     method: 'post',
                     url: state.endpoint + COMPOSES_CREATE_PATH,
-                    data: newItem
+                    data: editItem
                 });
                 if(response.status == 299){
                     state.message = {body: 'create compose error [' + response.data.msg + ']', show: true, type: 'error'};
@@ -410,6 +453,24 @@ const store = new Vuex.Store({
                 await this.commit('getComposes');
             }catch(e){
                 state.message = {body: 'create compose error [' + e.message + ']', show: true, type: 'error'};
+            }
+        },
+        async updateCompose(state, editItem){
+            try{
+                var response = await axios({
+                    headers: {'Content-Type': 'application/json; charset=UTF-8', 'Accept': 'application/json'},
+                    method: 'post',
+                    url: state.endpoint + COMPOSES_UPDATE_PATH + editItem.Name,
+                    data: editItem
+                });
+                if(response.status == 299){
+                    state.message = {body: 'update compose error [' + response.data.msg + ']', show: true, type: 'error'};
+                    return;
+                }
+                state.message = {body: 'update compose success', show: true, type: 'success'};
+                await this.commit('getComposes');
+            }catch(e){
+                state.message = {body: 'update compose error [' + e.message + ']', show: true, type: 'error'};
             }
         },
         async removeCompose(state, items){

@@ -24,14 +24,21 @@ class NodeController extends Controller
     }
 
     public function postUpdate($id, Request $request){
-        $availability = $request->get('availability', null);
-        $name = $request->get('name', null);
-        $role = $request->get('role', null);
-        $labels = $request->get('labels', null);
+        $availability = $request->get('Availability', null);
+        $name = $request->get('Name', null);
+        $role = $request->get('Role', null);
+        $labels = $request->get('Labels', null);
         $node = Node::get($id);
         $node->update($availability, $name, $role, $labels);
 
         return $this->response([]);
+    }
+
+    public function postRemove($Id){
+        $item = Node::get($Id);
+        $item->remove();
+
+        return $this->response();
     }
 
     public function getStatus($endpoint){

@@ -44,13 +44,13 @@ abstract class DockerApiModel implements ArrayAccess, Arrayable {
         curl_close($ch);
 
         if($httpCode > 199 && $httpCode < 299) {
-            $body = json_decode($body, true);
-            return $body;
+            $bodyDecode = json_decode($body, true);
+            return is_null($bodyDecode) ? $body : $bodyDecode;
         }else if($httpCode >99 && $httpCode < 600) {
             $body = json_decode($body, true);
             throw new NoticeMessageException($body['message']);
         }else if($httpCode == 0 || $body == false){
-            throw new NoticeMessageException("The Node can't connect");
+            throw new NoticeMessageException("The node can't connect");
         }
 
         throw new HttpException($body, $httpCode);

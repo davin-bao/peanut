@@ -19,11 +19,11 @@ class ContainerController extends Controller
         $stdout=$request->get('stdout', 1);
         $stderr=$request->get('stderr', 0);
         $since=$request->get('since', 0);
-        $timestamps=$request->get('timestamps', 0);
-        $tail=$request->get('tail', 'all');
+        $timestamps=$request->get('timestamps', 1);
+        $tail=$request->get('tail', '2000');
         $item = Container::getLogs($endpoint, $Id, $stdout, $stderr, $since, $timestamps, $tail);
 
-        return $this->response($item);
+        echo $item;
     }
 
     public function getList($endpoint){

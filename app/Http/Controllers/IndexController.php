@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-class IndexController extends Controller
+use Laravel\Lumen\Routing\Controller as BaseController;
+
+class IndexController extends BaseController
 {
 
     public function getIndex(){

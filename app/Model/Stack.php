@@ -57,11 +57,13 @@ class Stack extends DockerApiModel {
             throw new NoticeMessageException('Compose File Name field is required');
         }
         $composeFile = env('COMPOSE_FILE_PATH', storage_path('compose')) . DIRECTORY_SEPARATOR . $composeName . '.yml';
+
         if(!file_exists($composeFile)){
             throw new NoticeMessageException('Compose File Name is not exist');
         }
         $command = "docker stack deploy -c $composeFile $Name";
-        System::putCommand('stack_create_' . time(), $command);
+
+        return System::executeCommand($command);
     }
 
     public function remove(){

@@ -24,9 +24,9 @@ class StackController extends Controller
     }
 
     public function postCreate(Request $request){
-        Stack::create($request);
+        $result = Stack::create($request);
 
-        return $this->response();
+        return $this->response($result);
     }
 
     public function postRemove($Id){

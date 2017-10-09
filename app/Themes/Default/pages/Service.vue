@@ -71,16 +71,16 @@
         </v-card>
         <v-layout row justify-center>
             <v-dialog v-model="newItem.show" v-if="newItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
-                <v-btn primary dark slot="activator">{{ $t('nouns.service_create') }}</v-btn>
+                <v-btn primary slot="activator">{{ $t('nouns.service_create') }}</v-btn>
                 <v-card>
-                    <v-toolbar dark class="primary">
-                        <v-btn icon @click.native="newItem.show = false" dark>
+                    <v-toolbar class="primary">
+                        <v-btn icon @click.native="newItem.show = false">
                             <v-icon>close</v-icon>
                         </v-btn>
                         <v-toolbar-title>{{ $t('nouns.service_create') }}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                            <v-btn dark flat @click.native="createAction()">{{ $t('nouns.save') }}</v-btn>
+                            <v-btn flat @click.native="createAction()">{{ $t('nouns.save') }}</v-btn>
                         </v-toolbar-items>
                     </v-toolbar>
                     <v-container fluid grid-list-md>

@@ -8,8 +8,8 @@ class Service extends DockerApiModel {
     const LIST_PATH = 'services';
     const CREATE_PATH = 'services/create';
     const REMOVE_PATH = 'services/';
-    const UPDATE_PATH = 'services/{$Id}/update';
-    const LOGS_PATH = 'services/{$Id}/logs';
+    const UPDATE_PATH = 'services/{id}/update';
+    const LOG_PATH = 'services/{id}/logs';
 
     public static function get($Id){
         $item = static::HttpGet(str_replace('{id}', $Id, self::GET_PATH));
@@ -83,5 +83,11 @@ class Service extends DockerApiModel {
 
     public function remove(){
         return parent::HttpDelete(static::REMOVE_PATH . $this->Id);
+    }
+
+    public static function getLogs($Id, $stdout=1, $stderr=0, $since=0, $timestamps=false, $tail='all'){
+        $params = "?follow=false&stdout=$stdout&stderr=$stderr&since=$since&timestamps=$timestamps&tail=$tail";
+        $item = parent::HttpGet(str_replace('{id}', $Id, static::LOG_PATH) . $params);
+        return $item;
     }
 }

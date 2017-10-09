@@ -59,7 +59,7 @@ $app->singleton(
 |
 */
 
- $app->routeMiddleware([
+ $app->middleware([
      'enable_cross_request' => App\Http\Middleware\EnableCrossRequestMiddleware::class
  ]);
 

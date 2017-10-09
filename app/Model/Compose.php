@@ -28,7 +28,7 @@ class Compose extends DockerApiModel {
                 array_push($result,
                     new Compose([
                         'Name' => str_replace('.yml', '', $file),
-                        'Content' => ''
+                        'Content' => file_get_contents($root . DIRECTORY_SEPARATOR . $file)
                     ]));
             }
         }
@@ -49,6 +49,14 @@ class Compose extends DockerApiModel {
             throw new NoticeMessageException('Compose data file is exist');
         }
 
+        file_put_contents($fileName, $Content);
+
+        return [];
+    }
+
+    public function update($Content){
+        $root = storage_path(static::SAVE_PATH);
+        $fileName = $root . DIRECTORY_SEPARATOR . $this->Name . '.yml';
         file_put_contents($fileName, $Content);
 
         return [];

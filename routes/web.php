@@ -10,11 +10,11 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-
 $router->get('nodes/create', ['as' => 'node_create', 'uses' => 'NodeController@getCreateCommand']);
 $router->get('nodes/{Id}', ['as' => 'node_detail', 'uses' => 'NodeController@getDetail']);
 $router->post('nodes/{id}', ['as' => 'node_update', 'uses' => 'NodeController@postUpdate']);
 $router->get('nodes/status/{endpoint}', ['as' => 'nodes_status', 'uses' => 'NodeController@getStatus']);
+$router->delete('nodes/{Id}', ['as' => 'node_remove', 'uses' => 'NodeController@postRemove']);
 $router->get('nodes', ['as' => 'node_list', 'uses' => 'NodeController@getList']);
 $router->get('containers/{endpoint}/{id}/logs', ['as' => 'container_log', 'uses' => 'ContainerController@getLog']);
 $router->get('containers/{endpoint}/{id}', ['as' => 'container_detail', 'uses' => 'ContainerController@getDetail']);
@@ -26,6 +26,7 @@ $router->delete('stacks/{Name}', ['as' => 'stack_remove', 'uses' => 'StackContro
 $router->get('stacks', ['as' => 'stack_list', 'uses' => 'StackController@getList']);
 
 $router->post('services/create', ['as' => 'service_create', 'uses' => 'ServiceController@postCreate']);
+$router->get('services/{id}/logs', ['as' => 'service_log', 'uses' => 'ServiceController@getLog']);
 $router->delete('services/{Id}', ['as' => 'service_remove', 'uses' => 'ServiceController@postRemove']);
 $router->get('services', ['as' => 'service_list', 'uses' => 'ServiceController@getList']);
 
@@ -37,12 +38,8 @@ $router->delete('networks/{Id}', ['as' => 'network_remove', 'uses' => 'NetworkCo
 $router->get('networks', ['as' => 'network_list', 'uses' => 'NetworkController@getList']);
 
 $router->post('composes/create', ['as' => 'compose_create', 'uses' => 'ComposeController@postCreate']);
+$router->post('composes/{Name}', ['as' => 'compose_update', 'uses' => 'ComposeController@postUpdate']);
 $router->delete('composes/{Name}', ['as' => 'compose_remove', 'uses' => 'ComposeController@postRemove']);
 $router->get('composes', ['as' => 'compose_list', 'uses' => 'ComposeController@getList']);
-
-$router->post('system/status', ['as' => 'system_status', 'uses' => 'SystemController@getStatus']);
-$router->get('system/command', ['as' => 'system_command', 'uses' => 'SystemController@getCommand']);
-$router->post('system/command-result', ['as' => 'system_command_result_create', 'uses' => 'SystemController@postCommandResult']);
-$router->get('system/command-result', ['as' => 'system_command_result', 'uses' => 'SystemController@getCommandResult']);
 
 $router->get('/', ['as' => 'index', 'uses' => 'IndexController@getIndex']);

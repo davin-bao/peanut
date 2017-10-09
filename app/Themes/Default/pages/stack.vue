@@ -16,7 +16,7 @@
                 <v-spacer></v-spacer>
                 <v-toolbar flat class="content-toolbar">
                     <v-spacer></v-spacer>
-                    <v-btn @click="newItem.show=true" icon>
+                    <v-btn @click="editItem.show=true" icon>
                         <v-icon>add</v-icon>
                     </v-btn>
                     <v-btn @click="removeAllAction()" icon>
@@ -59,8 +59,8 @@
                             <v-btn flat :to="'/service/'+props.item.Name">
                                 <v-icon>list</v-icon>
                             </v-btn>
-                            <v-btn flat primary>
-                                <v-icon>visibility</v-icon>
+                            <v-btn flat primary @click="updateAction(props.item)">
+                                <v-icon>edit</v-icon>
                             </v-btn>
                             <v-btn flat error @click="removeAction(props.item)">
                                 <v-icon>delete</v-icon>
@@ -71,158 +71,46 @@
             </v-data-table>
         </v-card>
         <v-layout row justify-center>
-            <v-dialog v-model="newItem.show" v-if="newItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
-                <v-btn primary dark slot="activator">{{ $t('nouns.stack_create') }}</v-btn>
+            <v-dialog v-model="editItem.show" v-if="editItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
+                <v-btn primary slot="activator">{{ $t(editItem.title) }}</v-btn>
                 <v-card>
-                    <v-toolbar dark class="primary">
-                        <v-btn icon @click.native="newItem.show = false" dark>
+                    <v-toolbar class="primary">
+                        <v-btn icon @click.native="editItem.show = false">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>{{ $t('nouns.stack_create') }}</v-toolbar-title>
+                        <v-toolbar-title>{{ $t(editItem.title) }}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                            <v-btn dark flat @click.native="createAction()">{{ $t('nouns.save') }}</v-btn>
+                            <v-btn flat @click.native="createAction">{{ $t('nouns.save') }}</v-btn>
                         </v-toolbar-items>
                     </v-toolbar>
                     <v-container fluid grid-list-md>
                         <v-layout row wrap>
-                            <v-flex d-flex xs12 sm12 md12>
-                                <v-subheader>Basic configuration</v-subheader>
-                            </v-flex>
                             <v-flex d-flex xs12 sm3 md2>
                                 <v-subheader>Name</v-subheader>
                             </v-flex>
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-text-field
                                         label="Name"
-                                        v-model="newItem.Name"
-                                        :rules="[() => newItem.Name.length > 0 || $t('validate.required')]"
+                                        v-model="editItem.Name"
+                                        :rules="[() => editItem.Name.length > 0 || $t('validate.required')]"
                                         required
                                 ></v-text-field>
                             </v-flex>
                             <v-flex d-flex xs12 sm3 md2>
-                                <v-subheader>Driver</v-subheader>
+                                <v-subheader>Compose File</v-subheader>
                             </v-flex>
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-select
-                                        v-bind:items="newItem.DirverSelectItems"
-                                        v-model="newItem.Driver"
+                                        v-bind:items="composes.selectData"
+                                        v-model="editItem.ComposeFileName"
                                         label="Select"
-                                        single-line
-                                        bottom
+                                        autocomplete
                                 ></v-select>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="CheckDuplicate" v-model="newItem.CheckDuplicate"></v-switch>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="Internal" v-model="newItem.Internal"></v-switch>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="Attachable" v-model="newItem.Attachable"></v-switch>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="Ingress" v-model="newItem.Ingress"></v-switch>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="EnableIPv6" v-model="newItem.EnableIPv6"></v-switch>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm12 md12>
-                                <v-subheader>Stack configuration</v-subheader>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm3 md2>
-                                <v-subheader>Subnet</v-subheader>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm9 md10>
-                                <v-text-field
-                                        label="Subnet"
-                                        v-model="newItem.Subnet"
-                                        :rules="['e.g. 172.20.0.0/16']"
-                                ></v-text-field>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm3 md2>
-                                <v-subheader>Gateway</v-subheader>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm9 md10>
-                                <v-text-field
-                                        label="Gateway"
-                                        v-model="newItem.Gateway"
-                                        :rules="['e.g. 172.20.10.11']"
-                                ></v-text-field>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm3 md2>
-                                <v-layout row wrap>
-                                    <v-flex xs6>
-                                        <v-subheader>Options</v-subheader>
-                                    </v-flex>
-                                    <v-flex xs6>
-                                        <v-btn @click="newItem.Options.push({name: '', value: ''})" icon>
-                                            <v-icon>add</v-icon>
-                                        </v-btn>
-                                    </v-flex>
-                                </v-layout>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm9 md10>
-                                <v-layout row wrap>
-                                    <template  v-for="(item, index) in newItem.Options">
-                                        <v-flex d-flex xs3>
-                                            <v-text-field
-                                                    label="Name"
-                                                    v-model="newItem.Options[index].name"
-                                            ></v-text-field>
-                                        </v-flex>
-                                        <v-flex d-flex xs3>
-                                            <v-text-field
-                                                    label="Value"
-                                                    v-model="newItem.Options[index].value"
-                                            ></v-text-field>
-                                        </v-flex>
-                                        <v-flex xs6>
-                                            <v-btn @click="newItem.Options.length>1 && newItem.Options.splice(index,1)" icon>
-                                                <v-icon>remove</v-icon>
-                                            </v-btn>
-                                        </v-flex>
-                                    </template>
-                                </v-layout>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm3 md2>
-                                <v-layout row wrap>
-                                    <v-flex xs6>
-                                        <v-subheader>Labels</v-subheader>
-                                    </v-flex>
-                                    <v-flex xs6>
-                                        <v-btn @click="newItem.Labels.push({name: '', value: ''})" icon>
-                                            <v-icon>add</v-icon>
-                                        </v-btn>
-                                    </v-flex>
-                                </v-layout>
-                            </v-flex>
-                            <v-flex d-flex xs12 sm12 md12>
-                                <v-layout row wrap>
-                                    <template  v-for="(item, index) in newItem.Labels">
-                                        <v-flex d-flex xs3>
-                                            <v-text-field
-                                                    label="Name"
-                                                    v-model="newItem.Labels[index].name"
-                                            ></v-text-field>
-                                        </v-flex>
-                                        <v-flex d-flex xs3>
-                                            <v-text-field
-                                                    label="Value"
-                                                    v-model="newItem.Labels[index].value"
-                                            ></v-text-field>
-                                        </v-flex>
-                                        <v-flex xs6>
-                                            <v-btn @click="newItem.Labels.length>1 && newItem.Labels.splice(index,1)" icon>
-                                                <v-icon>remove</v-icon>
-                                            </v-btn>
-                                        </v-flex>
-                                    </template>
-                                </v-layout>
                             </v-flex>
                             <v-flex xs12 offset-xs0 offset-sm2>
                                 &nbsp;
-                                <v-btn @click="createAction()" primary
+                                <v-btn @click="createAction" primary
                                        absolute
                                        bottom
                                        right
@@ -275,20 +163,11 @@
                     }
                 ],
                 items: [],
-                newItem: {
+                editItem: {
                     show: false,
+                    title: 'nouns.stack_create',
                     Name: '',
-                    CheckDuplicate: false,
-                    Driver: 'overlay',
-                    DirverSelectItems: ['overlay', 'bridge'],
-                    Internal: false,
-                    Attachable: false,
-                    Ingress: false,
-                    EnableIPv6: false,
-                    Subnet: '',
-                    Gateway: '',
-                    Options: [],
-                    Labels: []
+                    ComposeFileName: ''
                 }
             }
         },
@@ -309,13 +188,21 @@
             },
             refreshAll() {
                 this.$store.commit('getStacks');
+                this.$store.commit('getComposes');
             },
             showAddDialog() {
-                this.newItem.show = true;
+                this.editItem.show = true;
+                this.editItem.title = 'nouns.stack_create';
             },
             createAction() {
-                this.$store.commit('createStack', this.newItem);
-                this.newItem.show = false;
+                this.$store.commit('createStack', this.editItem);
+                this.editItem.show = false;
+            },
+            updateAction(item) {
+                this.editItem.show = true;
+                this.editItem.title = 'nouns.stack_update';
+                this.editItem.Name = item.Name;
+                this.editItem.ComposeFileName = '';
             },
             removeAction(item) {
                 var self = this;
@@ -325,7 +212,7 @@
             }
         },
         computed: {
-                ...mapState(['stacks'])
+                ...mapState(['stacks', 'composes'])
         }
     }
 </script>

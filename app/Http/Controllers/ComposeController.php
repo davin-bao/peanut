@@ -24,6 +24,14 @@ class ComposeController extends Controller
         return $this->response();
     }
 
+    public function postUpdate($Name, Request $request){
+        $compose = Compose::get($Name);
+        $Content = $request->get('Content', null);
+        $compose->update($Content);
+
+        return $this->response();
+    }
+
     public function postRemove($Name){
         $item = Compose::get($Name);
         $item->remove();

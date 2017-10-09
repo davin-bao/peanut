@@ -17,13 +17,10 @@
                 <v-flex d-flex xs12 sm12 md12>
                     <v-toolbar flat small class="content-toolbar">
                         <v-spacer></v-spacer>
-                        <v-btn icon>
+                        <v-btn icon @click.active="showEditDialog(node.data)">
                             <v-icon>edit</v-icon>
                         </v-btn>
-                        <v-btn icon @click="removeAction(node)">
-                            <v-icon>delete</v-icon>
-                        </v-btn>
-                        <v-btn icon>
+                        <v-btn icon @click.active="refreshAll">
                             <v-icon>refresh</v-icon>
                         </v-btn>
                     </v-toolbar>
@@ -98,6 +95,106 @@
             </template>
         </v-layout>
     </v-container>
+        <v-layout row justify-center>
+            <v-dialog v-model="editItem.show" v-if="editItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
+                <v-btn primary slot="activator">{{ $t('nouns.node_update') }}</v-btn>
+                <v-card>
+                    <v-toolbar class="primary">
+                        <v-btn icon @click.native="editItem.show = false">
+                            <v-icon>close</v-icon>
+                        </v-btn>
+                        <v-toolbar-title>{{ $t('nouns.node_update') }}</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-toolbar-items>
+                            <v-btn flat @click.native="createAction()">{{ $t('nouns.save') }}</v-btn>
+                        </v-toolbar-items>
+                    </v-toolbar>
+                    <v-container fluid grid-list-md>
+                        <v-layout row wrap>
+                            <v-flex d-flex xs12 sm3 md2>
+                                <v-subheader>Name</v-subheader>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm9 md10>
+                                <v-text-field
+                                        label="Name"
+                                        v-model="editItem.Name"
+                                        :rules="[() => editItem.Name.length > 0 || $t('validate.required')]"
+                                        required
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm3 md2>
+                                <v-subheader>Role</v-subheader>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm9 md10>
+                                <v-select
+                                        v-bind:items="editItem.RoleSelectItems"
+                                        v-model="editItem.Role"
+                                        label="Select"
+                                        single-line
+                                        bottom
+                                ></v-select>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm3 md2>
+                                <v-subheader>Availability</v-subheader>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm9 md10>
+                                <v-select
+                                        v-bind:items="editItem.AvailabilitySelectItems"
+                                        v-model="editItem.Availability"
+                                        label="Select"
+                                        single-line
+                                        bottom
+                                ></v-select>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm3 md2>
+                                <v-layout row wrap>
+                                    <v-flex xs6>
+                                        <v-subheader>Labels</v-subheader>
+                                    </v-flex>
+                                    <v-flex xs6>
+                                        <v-btn @click="editItem.Labels.push({name: '', value: ''})" icon>
+                                            <v-icon>add</v-icon>
+                                        </v-btn>
+                                    </v-flex>
+                                </v-layout>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm12 md12>
+                                <v-layout row wrap>
+                                    <template  v-for="(item, index) in editItem.Labels">
+                                        <v-flex d-flex xs3>
+                                            <v-text-field
+                                                    label="Name"
+                                                    v-model="editItem.Labels[index].name"
+                                            ></v-text-field>
+                                        </v-flex>
+                                        <v-flex d-flex xs3>
+                                            <v-text-field
+                                                    label="Value"
+                                                    v-model="editItem.Labels[index].value"
+                                            ></v-text-field>
+                                        </v-flex>
+                                        <v-flex xs6>
+                                            <v-btn @click="editItem.Labels.length>1 && editItem.Labels.splice(index,1)" icon>
+                                                <v-icon>remove</v-icon>
+                                            </v-btn>
+                                        </v-flex>
+                                    </template>
+                                </v-layout>
+                            </v-flex>
+                            <v-flex xs12 offset-xs0 offset-sm2>
+                                &nbsp;
+                                <v-btn @click="createAction()" primary
+                                       absolute
+                                       bottom
+                                       right
+                                       class="create-dialog-save-btn"
+                                >SAVE</v-btn>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-card>
+            </v-dialog>
+        </v-layout>
     </div>
 </template>
 <script>
@@ -126,6 +223,16 @@
                     labels: [],
                     data: [],
                     count: 50
+                },
+                editItem: {
+                    show: false,
+                    ID: '',
+                    Name: '',
+                    Role: 'manager',
+                    RoleSelectItems: ['manager', 'worker'],
+                    Availability: 'active',
+                    AvailabilitySelectItems: ['active', 'pause', 'drain'],
+                    Labels: []
                 }
             }
         },
@@ -133,11 +240,14 @@
         },
         mounted () {
             this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'nouns.node_detail'}]);
-            this.$store.commit('getNode', this.$route.params.id);
+            this.refreshAll();
             this.monitor();
             this.intervalId = setInterval(this.change, 5000);
         },
         methods: {
+            refreshAll() {
+                this.$store.commit('getNode', this.$route.params.id);
+            },
             change() {
                 if(!this.node.data.ManagerStatus){
                     return;
@@ -168,7 +278,8 @@
                 this.cpu.borderColor = this.cpu.backgroundColor.substr(0, this.cpu.backgroundColor - 4) + '1)';
                 this.memory.backgroundColor = Util.randomColorRgba(0.4);
                 this.memory.borderColor = this.memory.backgroundColor.substr(0, this.memory.backgroundColor - 4) + '1)';
-                for(var i=0; i<this.cpu.count; i++){
+
+                for(var i=0; i<this.cpu.count-1; i++){
                     this.cpu.labels.push(0);
                     this.cpu.data.push(0);
                     this.memory.labels.push(0);
@@ -213,11 +324,17 @@
                 };
 
             },
-            removeAction(item) {
-                var self = this;
-                this.$store.commit('showDeleteConfirm', function(){
-                    self.$store.commit('removeNode', [item]);
-                });
+            showEditDialog(item) {
+                this.editItem.show = true;
+                this.editItem.ID = item.ID;
+                this.editItem.Name = typeof(item.Spec.Name) === 'undefined' ? '' : item.Spec.Name;
+                this.editItem.Role = item.Spec.Role;
+                this.editItem.Availability = item.Spec.Availability;
+                this.editItem.Labels = item.Spec.Labels;
+            },
+            createAction() {
+                this.$store.commit('updateNode', this.editItem);
+                this.editItem.show = false;
             }
         },
         computed: {

@@ -79,6 +79,7 @@
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn flat class="orange--text" :to="'/node/'+item.ID"><v-icon>visibility</v-icon>DETAIL</v-btn>
+                            <v-btn flat class="red--text" @click="removeAction(item)"><v-icon>delete</v-icon>DELETE</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-flex>
@@ -96,9 +97,9 @@
         </v-container>
         <v-layout row justify-center>
             <v-dialog v-model="nodeCreateCommand.show" v-if="nodeCreateCommand.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
-                <v-btn primary dark slot="activator">{{ $t('nouns.node_create') }}</v-btn>
+                <v-btn primary slot="activator">{{ $t('nouns.node_create') }}</v-btn>
                 <v-card>
-                    <v-toolbar dark class="primary">
+                    <v-toolbar class="primary">
                         <v-btn icon @click.native="nodeCreateCommand.show = false">
                             <v-icon>close</v-icon>
                         </v-btn>
@@ -183,6 +184,12 @@
             showNodeCreateDialog () {
                 this.nodeCreateCommand.show = true;
                 this.$store.commit('getNodeCreateCommand');
+            },
+            removeAction(item) {
+                var self = this;
+                this.$store.commit('showDeleteConfirm', function(){
+                    self.$store.commit('removeNode', [item]);
+                });
             }
         },
         mounted () {

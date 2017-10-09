@@ -9,7 +9,7 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        $this->middleware('enable_cross_request');
+
     }
 
     public function response($content=[]){

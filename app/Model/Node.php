@@ -5,6 +5,7 @@ class Node extends DockerApiModel {
 
     const LIST_PATH = 'nodes';
     const GET_PATH = 'nodes/{id}';
+    const REMOVE_PATH = 'nodes/{id}';
 
     public static function get($Id, $uri=null){
         $item = static::HttpGet(str_replace('{id}', $Id, self::GET_PATH), $uri);
@@ -23,17 +24,30 @@ class Node extends DockerApiModel {
     }
 
     public function update($availability, $name, $role, $labels){
-        $this->Availability = $availability ? $availability : $this->Availability;
-        $this->Name = $name ? $name : $this->Name;
-        $this->Role = $role ? $role : $this->Role;
-        $this->Labels = $labels ? $labels : $this->Labels;
-        $attributes = [
-            'Availability' => $this->Availability,
-            'Name' => $this->Name,
-            'Role' => $this->Role,
-            'Labels' => (object)$this->Labels,
+
+        $this->Spec = [
+            'Availability' => $availability ? $availability : array_get($this->Spec, 'Availability', 'active'),
+            'Name' => $name ? $name : array_get($this->Spec, 'Name', ''),
+            'Role' => $role ? $role : array_get($this->Spec, 'Role', 'manager'),
+            'Labels' => $labels ? $labels : array_get($this->Spec, 'Labels', [])
         ];
 
-        return parent::HttpPost('nodes/' . $this->ID . '/update?version=' . $this->Version->Index, $attributes);
+        $labels = [];
+        foreach(array_get($this->Spec, 'Labels', []) as $label){
+            $labels[array_get($label,'name')] = array_get($label,'value');
+        }
+        $attributes = [
+            'Availability' => $availability ? $availability : array_get($this->Spec, 'Availability', 'active'),
+            'Name' => $name ? $name : array_get($this->Spec, 'Name', ''),
+            'Role' => $role ? $role : array_get($this->Spec, 'Role', 'manager'),
+            'Labels' => $labels
+        ];
+
+        return parent::HttpPost('nodes/' . $this->ID . '/update?version=' . $this->Version['Index'], $attributes);
+    }
+
+    public function remove(){
+        return str_replace('{id}', $this->Id, self::REMOVE_PATH);
+//        return parent::HttpDelete(str_replace('{id}', $this->Id, self::REMOVE_PATH));
     }
 }
