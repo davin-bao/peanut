@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import menu from '../menu';
-import util from '../libs/util';
+import Util from '../libs/util';
 
 Vue.use(Vuex);
 
@@ -113,8 +113,8 @@ const store = new Vuex.Store({
                     }
 
                     state.nodes.data[i].status = {};
-                    state.nodes.data[i].status.cpu = parseFloat(util.numToCurrency(response.data.cpu, 2));
-                    state.nodes.data[i].status.memory = parseFloat(util.numToCurrency(response.data.memFree*100/response.data.memTotal, 2));
+                    state.nodes.data[i].status.cpu = parseFloat(Util.numToCurrency(response.data.cpu, 2));
+                    state.nodes.data[i].status.memory = parseFloat(Util.numToCurrency(response.data.memFree*100/response.data.memTotal, 2));
                 }catch(e){
                     state.message = {body: 'get containers error [' + e.message + ']', show: true, type: 'error'};
                 }
@@ -209,6 +209,9 @@ const store = new Vuex.Store({
         async getContainers (state){
             state.containers.loading = true;
             state.containers.data = [];
+            if(state.nodes.data.length <= 0){
+                await this.commit('getNodes');
+            }
 
             for(var i=0; i<state.nodes.data.length; i++){
                 var nodeId = state.nodes.data[i].ID;
@@ -223,9 +226,15 @@ const store = new Vuex.Store({
                         state.message = {body: 'get containers error [' + response.data.msg + ']', show: true, type: 'error'};
                         return;
                     }
+                    state.nodes.data[i].containers = [];
+                    for(var j=0; Util.isArray(response.data)&&j<response.data.length; j++){
+                        let entity = response.data[j];
+                        entity.NodeAddress = address.substring(0, address.indexOf(':'));
 
-                    state.containers.data[nodeId] = response.data;
-                    state.nodes.data[i].containers = response.data;
+                        state.containers.data.push(entity);
+                        state.nodes.data[i].containers.push(entity);
+                    }
+
                 }catch(e){
                     state.message = {body: 'get containers error [' + e.message + ']', show: true, type: 'error'};
                 }

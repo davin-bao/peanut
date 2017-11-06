@@ -15,6 +15,7 @@ const routers = [
         route('/stack', 'Stack', 'stack'),
         route('/service', 'Service', 'service'),
         route('/service/:Stack', 'Service', 'service_stack'),
+        route('/container', 'Container', 'container'),
         route('/network', 'Network', 'network'),
         route('/compose', 'Compose', 'compose')
     ])

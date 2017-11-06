@@ -16,7 +16,7 @@
                 <v-spacer></v-spacer>
                 <v-toolbar flat class="content-toolbar">
                     <v-spacer></v-spacer>
-                    <v-btn @click="newItem.show=true" icon>
+                    <v-btn @click="editItem.show=true" icon>
                         <v-icon>add</v-icon>
                     </v-btn>
                     <v-btn @click="removeAllAction()" icon>
@@ -70,11 +70,11 @@
             </v-data-table>
         </v-card>
         <v-layout row justify-center>
-            <v-dialog v-model="newItem.show" v-if="newItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
+            <v-dialog v-model="editItem.show" v-if="editItem.show" width="50%" :fullscreen="this.$parent.$data.clientWidth<770" transition="dialog-bottom-transition" :overlay=false>
                 <v-btn primary slot="activator">{{ $t('nouns.service_create') }}</v-btn>
                 <v-card>
                     <v-toolbar class="primary">
-                        <v-btn icon @click.native="newItem.show = false">
+                        <v-btn icon @click.native="editItem.show = false">
                             <v-icon>close</v-icon>
                         </v-btn>
                         <v-toolbar-title>{{ $t('nouns.service_create') }}</v-toolbar-title>
@@ -94,8 +94,8 @@
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-text-field
                                         label="Name"
-                                        v-model="newItem.Name"
-                                        :rules="[() => newItem.Name.length > 0 || $t('validate.required')]"
+                                        v-model="editItem.Name"
+                                        :rules="[() => editItem.Name.length > 0 || $t('validate.required')]"
                                         required
                                 ></v-text-field>
                             </v-flex>
@@ -104,27 +104,27 @@
                             </v-flex>
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-select
-                                        v-bind:items="newItem.DirverSelectItems"
-                                        v-model="newItem.Driver"
+                                        v-bind:items="editItem.DirverSelectItems"
+                                        v-model="editItem.Driver"
                                         label="Select"
                                         single-line
                                         bottom
                                 ></v-select>
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="CheckDuplicate" v-model="newItem.CheckDuplicate"></v-switch>
+                                <v-switch primary label="CheckDuplicate" v-model="editItem.CheckDuplicate"></v-switch>
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="Internal" v-model="newItem.Internal"></v-switch>
+                                <v-switch primary label="Internal" v-model="editItem.Internal"></v-switch>
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="Attachable" v-model="newItem.Attachable"></v-switch>
+                                <v-switch primary label="Attachable" v-model="editItem.Attachable"></v-switch>
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="Ingress" v-model="newItem.Ingress"></v-switch>
+                                <v-switch primary label="Ingress" v-model="editItem.Ingress"></v-switch>
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md6 lg4>
-                                <v-switch primary label="EnableIPv6" v-model="newItem.EnableIPv6"></v-switch>
+                                <v-switch primary label="EnableIPv6" v-model="editItem.EnableIPv6"></v-switch>
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md12>
                                 <v-subheader>Service configuration</v-subheader>
@@ -135,7 +135,7 @@
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-text-field
                                         label="Subnet"
-                                        v-model="newItem.Subnet"
+                                        v-model="editItem.Subnet"
                                         :rules="['e.g. 172.20.0.0/16']"
                                 ></v-text-field>
                             </v-flex>
@@ -145,7 +145,7 @@
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-text-field
                                         label="Gateway"
-                                        v-model="newItem.Gateway"
+                                        v-model="editItem.Gateway"
                                         :rules="['e.g. 172.20.10.11']"
                                 ></v-text-field>
                             </v-flex>
@@ -155,7 +155,7 @@
                                         <v-subheader>Options</v-subheader>
                                     </v-flex>
                                     <v-flex xs6>
-                                        <v-btn @click="newItem.Options.push({name: '', value: ''})" icon>
+                                        <v-btn @click="editItem.Options.push({name: '', value: ''})" icon>
                                             <v-icon>add</v-icon>
                                         </v-btn>
                                     </v-flex>
@@ -163,21 +163,21 @@
                             </v-flex>
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-layout row wrap>
-                                    <template  v-for="(item, index) in newItem.Options">
+                                    <template  v-for="(item, index) in editItem.Options">
                                         <v-flex d-flex xs3>
                                             <v-text-field
                                                     label="Name"
-                                                    v-model="newItem.Options[index].name"
+                                                    v-model="editItem.Options[index].name"
                                             ></v-text-field>
                                         </v-flex>
                                         <v-flex d-flex xs3>
                                             <v-text-field
                                                     label="Value"
-                                                    v-model="newItem.Options[index].value"
+                                                    v-model="editItem.Options[index].value"
                                             ></v-text-field>
                                         </v-flex>
                                         <v-flex xs6>
-                                            <v-btn @click="newItem.Options.length>1 && newItem.Options.splice(index,1)" icon>
+                                            <v-btn @click="editItem.Options.length>1 && editItem.Options.splice(index,1)" icon>
                                                 <v-icon>remove</v-icon>
                                             </v-btn>
                                         </v-flex>
@@ -190,7 +190,7 @@
                                         <v-subheader>Labels</v-subheader>
                                     </v-flex>
                                     <v-flex xs6>
-                                        <v-btn @click="newItem.Labels.push({name: '', value: ''})" icon>
+                                        <v-btn @click="editItem.Labels.push({name: '', value: ''})" icon>
                                             <v-icon>add</v-icon>
                                         </v-btn>
                                     </v-flex>
@@ -198,21 +198,21 @@
                             </v-flex>
                             <v-flex d-flex xs12 sm12 md12>
                                 <v-layout row wrap>
-                                    <template  v-for="(item, index) in newItem.Labels">
+                                    <template  v-for="(item, index) in editItem.Labels">
                                         <v-flex d-flex xs3>
                                             <v-text-field
                                                     label="Name"
-                                                    v-model="newItem.Labels[index].name"
+                                                    v-model="editItem.Labels[index].name"
                                             ></v-text-field>
                                         </v-flex>
                                         <v-flex d-flex xs3>
                                             <v-text-field
                                                     label="Value"
-                                                    v-model="newItem.Labels[index].value"
+                                                    v-model="editItem.Labels[index].value"
                                             ></v-text-field>
                                         </v-flex>
                                         <v-flex xs6>
-                                            <v-btn @click="newItem.Labels.length>1 && newItem.Labels.splice(index,1)" icon>
+                                            <v-btn @click="editItem.Labels.length>1 && editItem.Labels.splice(index,1)" icon>
                                                 <v-icon>remove</v-icon>
                                             </v-btn>
                                         </v-flex>
@@ -286,7 +286,7 @@
                     }
                 ],
                 items: [],
-                newItem: {
+                editItem: {
                     show: false,
                     Name: '',
                     CheckDuplicate: false,
@@ -322,11 +322,11 @@
                 this.$store.commit('getServices', this.$route.params.Stack);
             },
             showAddDialog() {
-                this.newItem.show = true;
+                this.editItem.show = true;
             },
             createAction() {
-                this.$store.commit('createService', this.newItem);
-                this.newItem.show = false;
+                this.$store.commit('createService', this.editItem);
+                this.editItem.show = false;
             },
             removeAction(item) {
                 var self = this;

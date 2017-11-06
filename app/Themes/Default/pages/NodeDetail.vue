@@ -75,7 +75,7 @@
                                 <v-flex d-flex xs12 sm6 md4>
                                     <p class="caption">Labels:
                                         <template v-for="(value, index) in node.data.Spec.Labels">
-                                            <v-chip label class="white--text">{{ index }}: {{ value }}</v-chip>
+                                            <v-chip label class="pink--text">{{ index }}: {{ value }}</v-chip>
                                         </template>
                                     </p>
                                 </v-flex>
@@ -174,7 +174,7 @@
                                             ></v-text-field>
                                         </v-flex>
                                         <v-flex xs6>
-                                            <v-btn @click="editItem.Labels.length>1 && editItem.Labels.splice(index,1)" icon>
+                                            <v-btn @click.active="editItem.Labels.length>1 && editItem.Labels.splice(index,1)" icon>
                                                 <v-icon>remove</v-icon>
                                             </v-btn>
                                         </v-flex>
@@ -325,14 +325,19 @@
 
             },
             showEditDialog(item) {
-                this.editItem.show = true;
-                this.editItem.ID = item.ID;
-                this.editItem.Name = typeof(item.Spec.Name) === 'undefined' ? '' : item.Spec.Name;
-                this.editItem.Role = item.Spec.Role;
-                this.editItem.Availability = item.Spec.Availability;
-                this.editItem.Labels = item.Spec.Labels;
+                let self = this;
+                self.editItem.show = true;
+                self.editItem.ID = item.ID;
+                self.editItem.Name = typeof(item.Spec.Name) === 'undefined' ? '' : item.Spec.Name;
+                self.editItem.Role = item.Spec.Role;
+                self.editItem.Availability = item.Spec.Availability;
+                self.editItem.Labels = [];
+                for (var name in item.Spec.Labels) {
+                    self.editItem.Labels.push({name: name, value: item.Spec.Labels[name]});
+                }
             },
             createAction() {
+                console.log(this.editItem);
                 this.$store.commit('updateNode', this.editItem);
                 this.editItem.show = false;
             }

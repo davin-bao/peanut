@@ -102,11 +102,27 @@
                             </v-flex>
                             <v-flex d-flex xs12 sm9 md10>
                                 <v-select
-                                        v-bind:items="composes.selectData"
-                                        v-model="editItem.ComposeFileName"
                                         label="Select"
                                         autocomplete
+                                        :loading="editItem.ComposeFileContentLoading"
+                                        cache-items
+                                        required
+                                        :items="composes.selectData"
+                                        v-model="editItem.ComposeFileName"
+                                        @blur="showComposeFileContent"
                                 ></v-select>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm3 md2>
+                                <v-subheader>Compose File</v-subheader>
+                            </v-flex>
+                            <v-flex d-flex xs12 sm9 md10>
+                                <v-text-field
+                                        box
+                                        textarea
+                                        rows="20"
+                                        label="Compose File Content"
+                                        v-model="editItem.ComposeFileContent"
+                                ></v-text-field>
                             </v-flex>
                             <v-flex xs12 offset-xs0 offset-sm2>
                                 &nbsp;
@@ -167,12 +183,13 @@
                     show: false,
                     title: 'nouns.stack_create',
                     Name: '',
-                    ComposeFileName: ''
-                }
+                    ComposeFileName: '',
+                    ComposeFileContentLoading: false,
+                    ComposeFileContent: ''
+                },
             }
         },
         watch: {
-
         },
         mounted () {
             this.$store.commit('setBreadcrumbs', [{ text: 'menu.home'}, { text: 'menu.stack'}]);
@@ -209,6 +226,22 @@
                 this.$store.commit('showDeleteConfirm', function(){
                     self.$store.commit('removeStack', [item]);
                 });
+            },
+            showComposeFileContent(val) {
+                this.editItem.ComposeFileContentLoading = true;
+                let matched = false, value = typeof(val.target)=='undefined' || typeof(val.target.value)=='undefined' ? value : val.target.value;
+
+                for(var i=0; i<this.composes.data.length; i++){
+                    if(this.composes.data[i].Name == value){
+                        matched = true;
+                        this.editItem.ComposeFileContent = this.composes.data[i].Content;
+                    }
+                }
+                if(value == '' || !matched){
+                    this.editItem.ComposeFileName = '';
+                    this.editItem.ComposeFileContent = '';
+                }
+                this.editItem.ComposeFileContentLoading = false;
             }
         },
         computed: {

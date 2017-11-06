@@ -34,13 +34,15 @@ class Node extends DockerApiModel {
 
         $labels = [];
         foreach(array_get($this->Spec, 'Labels', []) as $label){
-            $labels[array_get($label,'name')] = array_get($label,'value');
+            if(!empty(array_get($label,'name')) && !empty(array_get($label,'value'))){
+                $labels[array_get($label,'name')] = array_get($label,'value');
+            }
         }
         $attributes = [
             'Availability' => $availability ? $availability : array_get($this->Spec, 'Availability', 'active'),
             'Name' => $name ? $name : array_get($this->Spec, 'Name', ''),
             'Role' => $role ? $role : array_get($this->Spec, 'Role', 'manager'),
-            'Labels' => $labels
+            'Labels' => count($labels) == 0 ? null : $labels
         ];
 
         return parent::HttpPost('nodes/' . $this->ID . '/update?version=' . $this->Version['Index'], $attributes);

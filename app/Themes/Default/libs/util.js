@@ -81,6 +81,10 @@ util.floatDiv = function(arg1,arg2){
     return (r1/r2)*pow(10,t2-t1);
 };
 
+util.isArray = function (val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+};
+
 //日期格式化
 Date.prototype.format = function(format){
     if(!format){

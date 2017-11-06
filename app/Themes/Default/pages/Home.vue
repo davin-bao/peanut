@@ -174,10 +174,7 @@
                         status: 'created',
                         name: 'Created sandwich'
                     }
-                ],
-                newItem: {
-                    show: false
-                }
+                ]
             }
         },
         methods: {
